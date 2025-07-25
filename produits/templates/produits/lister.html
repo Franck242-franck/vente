@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Mes Produits</title>
+  <style>
+    body { font-family: Arial, sans-serif; background:#f0f0f0; padding:30px; }
+    table { width: 100%; border-collapse: collapse; background:#fff; box-shadow:0 0 10px rgba(0,0,0,0.1);}
+    th, td { padding:12px; border-bottom: 1px solid #ddd; text-align:center; }
+    th { background-color:#007BFF; color:#fff; }
+    tr:hover { background:#f5f5f5; }
+    a { margin: 0 5px; text-decoration:none; color:#007BFF; }
+    a:hover { text-decoration:underline; }
+    .nav {
+      margin-bottom: 20px;
+      text-align:right;
+    }
+    .nav a, .btn-vente {
+      background:#28a745;
+      color:#fff;
+      padding:10px 15px;
+      border-radius:5px;
+      text-decoration:none;
+      margin-left:10px;
+      font-weight: bold;
+      display: inline-block;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    .nav a.logout {
+      background:#dc3545;
+    }
+    .nav a:hover, .btn-vente:hover {
+      background:#218838;
+      text-decoration:none;
+    }
+    .btn-vente {
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="nav">
+    <a href="{% url 'ajouter' %}">➕ Ajouter Produit</a>
+    <a href="{% url 'historique' %}">📜 Historique Ventes</a>
+    {% if user.is_staff %}
+      <a href="{% url 'gerer_utilisateurs' %}">⚙️ Gérer Utilisateurs</a>
+    {% endif %}
+    <form action="{% url 'logout' %}" method="post" style="display:inline;">
+      {% csrf_token %}
+      <button type="submit" class="logout" style="background:#dc3545; border:none; color:#fff; padding:10px 15px; border-radius:5px; cursor:pointer;">
+        Déconnexion
+      </button>
+    </form>
+  </div>
+
+  <h1>Mes Produits</h1>
+
+  <a href="{% url 'enregistrer_vente' %}" class="btn-vente">🛒 Enregistrer une vente</a>
+
+  <table>
+    <tr>
+      <th>Nom</th>
+      <th>Quantité</th>
+      <th>Prix</th>
+      <th>Vendu</th>
+      <th>Actions</th>
+    </tr>
+    {% for produit in produits %}
+    <tr>
+      <td>{{ produit.nom }}</td>
+      <td>{{ produit.quantite }}</td>
+      <td>{{ produit.prix }} FCFA</td>
+      <td>{{ produit.vendu|yesno:"✅,❌" }}</td>
+      <td>
+        <a href="{% url 'modifier' produit.id %}">✏️ Modifier</a> |
+        <a href="{% url 'supprimer' produit.id %}">🗑️ Supprimer</a>
+      </td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="5">Aucun produit trouvé.</td></tr>
+    {% endfor %}
+  </table>
+</body>
+</html>

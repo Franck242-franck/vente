@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Gérer les utilisateurs</title>
+    <style>
+        body {
+            font-family: Arial;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        h2 {
+            color: #333;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            background-color: white;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #007bff;
+            color: white;
+        }
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+        .btn {
+            padding: 6px 12px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+        .btn-danger {
+            background-color: #dc3545;
+        }
+    </style>
+</head>
+<body>
+    <h2>Liste des utilisateurs</h2>
+    <a href="{% url 'ajouter_utilisateur' %}" class="btn" style="margin-bottom: 15px;">➕ Ajouter un utilisateur</a>
+    <table>
+        <thead>
+            <tr>
+                <th>Nom d'utilisateur</th>
+                <th>Email</th>
+                <th>Staff ?</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in utilisateurs %}
+            <tr>
+                <td>{{ user.username }}</td>
+                <td>{{ user.email }}</td>
+                <td>{{ user.is_staff }}</td>
+                <td>
+                    <!-- Exemple d'actions -->
+
+                    <a href="{% url 'supprimer_utilisateur' user.id %}">🗑️ Supprimer</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <a href="{% url 'lister' %}">← Retour à la liste des produits</a>
+</body>
+</html>

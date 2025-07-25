@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Enregistrer une vente</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f4f8;
+      padding: 30px;
+    }
+    h1 {
+      color: #333;
+      text-align: center;
+      margin-bottom: 15px;
+    }
+    form {
+      max-width: 500px;
+      margin: 0 auto;
+      background: white;
+      padding: 20px 30px;
+      border-radius: 8px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    }
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+      color: #555;
+    }
+    select, input[type="number"] {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      box-sizing: border-box;
+      font-size: 1em;
+    }
+    #montant {
+      font-size: 1.2em;
+      color: #000;
+      font-weight: bold;
+      text-align: center;
+      margin-top: 10px;
+    }
+    button {
+      background-color: #28a745;
+      border: none;
+      padding: 12px 20px;
+      color: white;
+      font-weight: bold;
+      font-size: 1em;
+      border-radius: 5px;
+      cursor: pointer;
+      width: 100%;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #218838;
+    }
+    a {
+      display: block;
+      margin-top: 15px;
+      text-align: center;
+      color: #007BFF;
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+    .messages {
+      max-width: 500px;
+      margin: 10px auto;
+      color: red;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Enregistrer une vente</h1>
+
+  {% if messages %}
+    <ul class="messages">
+      {% for message in messages %}
+        <li>{{ message }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+
+  <form method="post">
+    {% csrf_token %}
+
+    <label for="id_produit">Produit :</label>
+    {{ form.produit }}
+
+    <label for="id_quantite">Quantité vendue :</label>
+    {{ form.quantite }}
+
+    <div id="montant">Montant total : 0 FCFA</div>
+
+    <button type="submit">Enregistrer</button>
+  </form>
+
+  <a href="{% url 'lister' %}">← Retour à la liste des produits</a>
+
+  <script>
+    const prixProduits = {
+      {% for produit in produits %}
+        "{{ produit.id }}": {{ produit.prix }}{% if not forloop.last %},{% endif %}
+      {% endfor %}
+    };
+
+    const selectProduit = document.getElementById("id_produit");
+    const inputQuantite = document.getElementById("id_quantite");
+    const montantDiv = document.getElementById("montant");
+
+    function updateMontant() {
+      const produitId = selectProduit.value;
+      const quantite = parseInt(inputQuantite.value) || 0;
+      const prix = prixProduits[produitId] || 0;
+      const total = quantite * prix;
+      montantDiv.textContent = `Montant total : ${total} FCFA`;
+    }
+
+    selectProduit.addEventListener("change", updateMontant);
+    inputQuantite.addEventListener("input", updateMontant);
+
+    // Initialisation
+    updateMontant();
+  </script>
+
+</body>
+</html>

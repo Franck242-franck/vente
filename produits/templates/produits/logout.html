@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <title>Déconnexion</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            padding: 30px;
+            text-align: center;
+            color: #333;
+        }
+        .message {
+            margin-top: 50px;
+            font-size: 1.2em;
+        }
+        a {
+            display: inline-block;
+            margin-top: 20px;
+            color: #007BFF;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <h1>Vous êtes déconnecté(e)</h1>
+    <div class="message">
+        Merci d'être passé. À bientôt !
+    </div>
+    <a href="{% url 'login' %}">Se reconnecter</a>
+</body>
+</html>
