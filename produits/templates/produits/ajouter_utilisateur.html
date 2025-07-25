@@ -3,25 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <title>Ajouter un utilisateur</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: #f2f2f2;
             margin: 0;
-            padding: 40px;
+            padding: 40px 15px;
         }
 
         h2 {
             text-align: center;
             color: #333;
             margin-bottom: 30px;
+            font-size: 1.6em;
         }
 
         form {
             background-color: #fff;
-            padding: 30px;
+            padding: 25px;
             border-radius: 8px;
-            max-width: 450px;
+            max-width: 480px;
             margin: 0 auto;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         }
@@ -29,21 +31,22 @@
         input, select, textarea {
             width: 100%;
             padding: 12px;
-            margin-bottom: 20px;
+            margin-bottom: 18px;
             border: 1px solid #ccc;
             border-radius: 4px;
             box-sizing: border-box;
-            font-size: 16px;
+            font-size: 1em;
         }
 
         button {
             background-color: #007bff;
             color: white;
-            padding: 12px;
+            padding: 14px;
             border: none;
             border-radius: 4px;
-            font-size: 16px;
+            font-size: 1em;
             cursor: pointer;
+            width: 100%;
             transition: background-color 0.3s ease;
         }
 
@@ -62,6 +65,20 @@
 
         a:hover {
             text-decoration: underline;
+        }
+
+        @media (max-width: 500px) {
+            h2 {
+                font-size: 1.4em;
+            }
+
+            form {
+                padding: 20px;
+            }
+
+            input, select, textarea, button {
+                font-size: 1em;
+            }
         }
     </style>
 </head>

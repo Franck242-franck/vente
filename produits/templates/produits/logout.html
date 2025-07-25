@@ -2,36 +2,55 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Déconnexion</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             background-color: #f9f9f9;
-            padding: 30px;
+            padding: 20px;
+            margin: 0;
             text-align: center;
             color: #333;
         }
+
+        .container {
+            max-width: 500px;
+            margin: auto;
+            padding: 20px;
+        }
+
+        h1 {
+            font-size: 1.8em;
+            margin-bottom: 10px;
+        }
+
         .message {
-            margin-top: 50px;
+            margin-top: 20px;
             font-size: 1.2em;
         }
+
         a {
             display: inline-block;
             margin-top: 20px;
             color: #007BFF;
             text-decoration: none;
             font-weight: bold;
+            font-size: 1.1em;
         }
+
         a:hover {
             text-decoration: underline;
         }
     </style>
 </head>
 <body>
-    <h1>Vous êtes déconnecté(e)</h1>
-    <div class="message">
-        Merci d'être passé. À bientôt !
+    <div class="container">
+        <h1>Vous êtes déconnecté(e)</h1>
+        <div class="message">
+            Merci d'être passé. À bientôt !
+        </div>
+        <a href="{% url 'login' %}">Se reconnecter</a>
     </div>
-    <a href="{% url 'login' %}">Se reconnecter</a>
 </body>
 </html>

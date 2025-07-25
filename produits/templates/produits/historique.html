@@ -2,37 +2,51 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Historique des ventes</title>
   <style>
     body {
       font-family: Arial, sans-serif;
       background: #f9f9f9;
-      padding: 30px;
+      padding: 20px;
+      margin: 0;
     }
+
     h1 {
       text-align: center;
       color: #333;
       margin-bottom: 25px;
     }
+
+    .table-container {
+      overflow-x: auto;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
+    }
+
     table {
       width: 100%;
       border-collapse: collapse;
-      background: #fff;
-      box-shadow: 0 0 12px rgba(0,0,0,0.1);
+      min-width: 600px; /* empêche la casse sur petit écran */
     }
+
     th, td {
       padding: 12px 15px;
       border-bottom: 1px solid #ddd;
       text-align: center;
     }
+
     th {
       background-color: #007BFF;
       color: white;
       text-transform: uppercase;
     }
+
     tr:hover {
       background-color: #f1f1f1;
     }
+
     a {
       display: inline-block;
       margin-top: 20px;
@@ -40,8 +54,26 @@
       color: #007BFF;
       font-weight: bold;
     }
+
     a:hover {
       text-decoration: underline;
+    }
+
+    /* Responsive */
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 20px;
+      }
+
+      th, td {
+        font-size: 14px;
+        padding: 10px;
+      }
+
+      a {
+        font-size: 14px;
+        margin-top: 15px;
+      }
     }
   </style>
 </head>
@@ -49,34 +81,36 @@
 
   <h1>Historique des ventes</h1>
 
-  <table>
-    <thead>
-      <tr>
-        <th>Produit</th>
-        <th>Quantité</th>
-        <th>Prix unitaire</th>
-        <th>Montant total</th>
-        <th>Utilisateur</th>
-        <th>Date & Heure</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for vente in ventes %}
-      <tr>
-        <td>{{ vente.produit.nom }}</td>
-        <td>{{ vente.quantite }}</td>
-        <td>{{ vente.produit.prix }}</td>
-        <td>{{ vente.montant_total }}</td>
-        <td>{{ vente.utilisateur.username }}</td>
-        <td>{{ vente.date_heure|date:"d/m/Y H:i:s" }}</td>
-      </tr>
-      {% empty %}
-      <tr>
-        <td colspan="6">Aucune vente enregistrée.</td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>Produit</th>
+          <th>Quantité</th>
+          <th>Prix unitaire</th>
+          <th>Montant total</th>
+          <th>Utilisateur</th>
+          <th>Date & Heure</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for vente in ventes %}
+        <tr>
+          <td>{{ vente.produit.nom }}</td>
+          <td>{{ vente.quantite }}</td>
+          <td>{{ vente.produit.prix }}</td>
+          <td>{{ vente.montant_total }}</td>
+          <td>{{ vente.utilisateur.username }}</td>
+          <td>{{ vente.date_heure|date:"d/m/Y H:i:s" }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="6">Aucune vente enregistrée.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
 
   <a href="{% url 'lister' %}">← Retour à la liste des produits</a>
 

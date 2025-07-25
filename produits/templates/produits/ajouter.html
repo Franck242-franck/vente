@@ -3,76 +3,106 @@
 <head>
   <meta charset="UTF-8" />
   <title>Ajouter un produit</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
     body {
       font-family: Arial, sans-serif;
       background-color: #f0f4f8;
-      padding: 30px;
+      padding: 20px;
+      margin: 0;
     }
+
     h1 {
       color: #333;
       text-align: center;
-      margin-bottom: 25px;
+      margin-bottom: 20px;
+      font-size: 1.5rem;
     }
+
     form {
-      max-width: 500px;
-      margin: 0 auto;
       background: white;
-      padding: 20px 30px;
+      padding: 20px;
       border-radius: 8px;
       box-shadow: 0 0 15px rgba(0,0,0,0.1);
+      max-width: 500px;
+      margin: auto;
+      display: flex;
+      flex-direction: column;
     }
+
     label {
-      display: block;
-      margin-bottom: 8px;
+      margin-bottom: 5px;
       font-weight: bold;
       color: #555;
+      font-size: 0.95rem;
     }
+
     input[type="text"],
-    input[type="number"],
-    input[type="checkbox"] {
-      width: 100%;
+    input[type="number"] {
       padding: 10px;
       margin-bottom: 15px;
       border: 1px solid #ccc;
       border-radius: 5px;
-      box-sizing: border-box;
-      font-size: 1em;
+      font-size: 1rem;
     }
-    input[type="checkbox"] {
-      width: auto;
-      margin-right: 10px;
-      vertical-align: middle;
-    }
+
     .checkbox-label {
       display: flex;
       align-items: center;
       margin-bottom: 15px;
     }
+
+    .checkbox-label label {
+      margin: 0;
+      margin-left: 10px;
+      font-weight: normal;
+    }
+
     button {
       background-color: #007BFF;
       border: none;
-      padding: 12px 20px;
+      padding: 12px;
       color: white;
       font-weight: bold;
-      font-size: 1em;
+      font-size: 1rem;
       border-radius: 5px;
       cursor: pointer;
-      width: 100%;
       transition: background-color 0.3s ease;
     }
+
     button:hover {
       background-color: #0056b3;
     }
+
     a {
       display: block;
       margin-top: 15px;
       text-align: center;
       color: #007BFF;
       text-decoration: none;
+      font-size: 0.95rem;
     }
+
     a:hover {
       text-decoration: underline;
+    }
+
+    @media (max-width: 600px) {
+      body {
+        padding: 10px;
+      }
+
+      form {
+        padding: 15px;
+      }
+
+      h1 {
+        font-size: 1.2rem;
+      }
+
+      input, button {
+        font-size: 1rem;
+      }
     }
   </style>
 </head>
@@ -93,7 +123,8 @@
     {{ form.prix }}
 
     <div class="checkbox-label">
-      {{ form.vendu }} <label for="id_vendu">Vendu</label>
+      {{ form.vendu }}
+      <label for="id_vendu">Vendu</label>
     </div>
 
     <button type="submit">Ajouter</button>

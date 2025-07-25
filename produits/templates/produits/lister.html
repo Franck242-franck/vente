@@ -2,84 +2,78 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Mes Produits</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
-    body { font-family: Arial, sans-serif; background:#f0f0f0; padding:30px; }
-    table { width: 100%; border-collapse: collapse; background:#fff; box-shadow:0 0 10px rgba(0,0,0,0.1);}
-    th, td { padding:12px; border-bottom: 1px solid #ddd; text-align:center; }
-    th { background-color:#007BFF; color:#fff; }
-    tr:hover { background:#f5f5f5; }
-    a { margin: 0 5px; text-decoration:none; color:#007BFF; }
-    a:hover { text-decoration:underline; }
-    .nav {
-      margin-bottom: 20px;
-      text-align:right;
+    body {
+      background: #f0f0f0;
+      padding: 20px;
     }
-    .nav a, .btn-vente {
-      background:#28a745;
-      color:#fff;
-      padding:10px 15px;
-      border-radius:5px;
-      text-decoration:none;
-      margin-left:10px;
-      font-weight: bold;
-      display: inline-block;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
+    table {
+      background: #fff;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
-    .nav a.logout {
-      background:#dc3545;
+    .nav a, .btn-vente, .logout {
+      margin: 5px;
     }
-    .nav a:hover, .btn-vente:hover {
-      background:#218838;
-      text-decoration:none;
+    .logout {
+      background: #dc3545 !important;
     }
-    .btn-vente {
-      margin-bottom: 20px;
+    .nav-link:hover {
+      text-decoration: underline;
     }
   </style>
 </head>
 <body>
-  <div class="nav">
-    <a href="{% url 'ajouter' %}">➕ Ajouter Produit</a>
-    <a href="{% url 'historique' %}">📜 Historique Ventes</a>
-    {% if user.is_staff %}
-      <a href="{% url 'gerer_utilisateurs' %}">⚙️ Gérer Utilisateurs</a>
-    {% endif %}
-    <form action="{% url 'logout' %}" method="post" style="display:inline;">
-      {% csrf_token %}
-      <button type="submit" class="logout" style="background:#dc3545; border:none; color:#fff; padding:10px 15px; border-radius:5px; cursor:pointer;">
-        Déconnexion
-      </button>
-    </form>
+  <div class="container">
+    <div class="d-flex flex-column flex-md-row justify-content-end align-items-start mb-3 nav">
+      <a href="{% url 'ajouter' %}" class="btn btn-success">➕ Ajouter Produit</a>
+      <a href="{% url 'historique' %}" class="btn btn-success">📜 Historique Ventes</a>
+      {% if user.is_staff %}
+        <a href="{% url 'gerer_utilisateurs' %}" class="btn btn-success">⚙️ Gérer Utilisateurs</a>
+      {% endif %}
+      <form action="{% url 'logout' %}" method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn logout text-white">Déconnexion</button>
+      </form>
+    </div>
+
+    <h1 class="mb-4 text-center">Mes Produits</h1>
+
+    <div class="text-center mb-3">
+      <a href="{% url 'enregistrer_vente' %}" class="btn btn-primary btn-vente">🛒 Enregistrer une vente</a>
+    </div>
+
+    <div class="table-responsive">
+      <table class="table table-bordered text-center align-middle">
+        <thead class="table-primary">
+          <tr>
+            <th>Nom</th>
+            <th>Quantité</th>
+            <th>Prix</th>
+            <th>Vendu</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for produit in produits %}
+          <tr>
+            <td>{{ produit.nom }}</td>
+            <td>{{ produit.quantite }}</td>
+            <td>{{ produit.prix }} FCFA</td>
+            <td>{{ produit.vendu|yesno:"✅,❌" }}</td>
+            <td>
+              <a href="{% url 'modifier' produit.id %}">✏️</a>
+              <a href="{% url 'supprimer' produit.id %}">🗑️</a>
+            </td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="5">Aucun produit trouvé.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
   </div>
-
-  <h1>Mes Produits</h1>
-
-  <a href="{% url 'enregistrer_vente' %}" class="btn-vente">🛒 Enregistrer une vente</a>
-
-  <table>
-    <tr>
-      <th>Nom</th>
-      <th>Quantité</th>
-      <th>Prix</th>
-      <th>Vendu</th>
-      <th>Actions</th>
-    </tr>
-    {% for produit in produits %}
-    <tr>
-      <td>{{ produit.nom }}</td>
-      <td>{{ produit.quantite }}</td>
-      <td>{{ produit.prix }} FCFA</td>
-      <td>{{ produit.vendu|yesno:"✅,❌" }}</td>
-      <td>
-        <a href="{% url 'modifier' produit.id %}">✏️ Modifier</a> |
-        <a href="{% url 'supprimer' produit.id %}">🗑️ Supprimer</a>
-      </td>
-    </tr>
-    {% empty %}
-    <tr><td colspan="5">Aucun produit trouvé.</td></tr>
-    {% endfor %}
-  </table>
 </body>
 </html>

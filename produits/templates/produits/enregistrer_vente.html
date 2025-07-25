@@ -2,23 +2,26 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Enregistrer une vente</title>
   <style>
     body {
       font-family: Arial, sans-serif;
       background-color: #f0f4f8;
-      padding: 30px;
+      padding: 15px;
+      margin: 0;
     }
     h1 {
       color: #333;
       text-align: center;
-      margin-bottom: 15px;
+      font-size: 1.8em;
+      margin-bottom: 20px;
     }
     form {
       max-width: 500px;
       margin: 0 auto;
       background: white;
-      padding: 20px 30px;
+      padding: 20px;
       border-radius: 8px;
       box-shadow: 0 0 15px rgba(0,0,0,0.1);
     }
@@ -28,9 +31,10 @@
       font-weight: bold;
       color: #555;
     }
-    select, input[type="number"] {
+    select,
+    input[type="number"] {
       width: 100%;
-      padding: 10px;
+      padding: 12px;
       margin-bottom: 15px;
       border: 1px solid #ccc;
       border-radius: 5px;
@@ -47,7 +51,7 @@
     button {
       background-color: #28a745;
       border: none;
-      padding: 12px 20px;
+      padding: 14px 20px;
       color: white;
       font-weight: bold;
       font-size: 1em;
@@ -61,10 +65,11 @@
     }
     a {
       display: block;
-      margin-top: 15px;
+      margin-top: 20px;
       text-align: center;
       color: #007BFF;
       text-decoration: none;
+      font-size: 1em;
     }
     a:hover {
       text-decoration: underline;
@@ -73,6 +78,24 @@
       max-width: 500px;
       margin: 10px auto;
       color: red;
+      font-size: 0.95em;
+      padding: 0 10px;
+    }
+
+    /* Responsive mobile */
+    @media (max-width: 600px) {
+      body {
+        padding: 10px;
+      }
+      form {
+        padding: 15px;
+      }
+      h1 {
+        font-size: 1.5em;
+      }
+      button {
+        padding: 12px;
+      }
     }
   </style>
 </head>
