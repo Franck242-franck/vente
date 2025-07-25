@@ -88,7 +88,7 @@ WSGI_APPLICATION = 'gestion_produits.wsgi.application'
 #}
 
 DATABASES = {
-    'default':dj-database-url.parse(config('DATABASE_URL'))
+    'default':dj_database_url.parse(config('DATABASE_URL'))
 }
 
 # Password validation
