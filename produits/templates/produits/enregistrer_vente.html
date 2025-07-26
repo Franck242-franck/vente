@@ -1,8 +1,11 @@
-<!DOCTYPE html>
+{% load static %}
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="manifest" href="{% static 'manifest.json' %}">
+  <meta name="theme-color" content="#007bff">
+
   <title>Enregistrer une vente</title>
   <style>
     body {
@@ -151,6 +154,17 @@
 
     // Initialisation
     updateMontant();
+  </script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register("{% static 'js/service-worker.js' %}")
+        .then(function(registration) {
+          console.log("Service worker enregistré avec succès.");
+        })
+        .catch(function(error) {
+          console.log("Erreur lors de l'enregistrement du service worker :", error);
+        });
+    }
   </script>
 
 </body>

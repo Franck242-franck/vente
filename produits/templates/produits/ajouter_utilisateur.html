@@ -1,9 +1,12 @@
-<!DOCTYPE html>
+{% load static %}
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <title>Ajouter un utilisateur</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="manifest" href="{% static 'manifest.json' %}">
+    <meta name="theme-color" content="#007bff">
+
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -90,5 +93,17 @@
         <button type="submit">Ajouter</button>
     </form>
     <a href="{% url 'gerer_utilisateurs' %}">← Retour à la liste des utilisateurs</a>
+    <script>
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register("{% static 'js/service-worker.js' %}")
+          .then(function(registration) {
+            console.log("Service worker enregistré avec succès.");
+          })
+          .catch(function(error) {
+            console.log("Erreur lors de l'enregistrement du service worker :", error);
+          });
+      }
+    </script>
+
 </body>
 </html>
