@@ -110,3 +110,16 @@ def supprimer_utilisateur(request, id):
         utilisateur.delete()
         return redirect('gerer_utilisateurs')  # ou la bonne vue de liste des utilisateurs
     return render(request, "produits/supprimer_utilisateur.html", {"utilisateur": utilisateur})
+
+
+
+def lister_produits(request):
+    query = request.GET.get('q')
+    if query:
+        produits = Produit.objects.filter(nom__icontains=query)
+    else:
+        produits = Produit.objects.all()
+    return render(request, 'produits/lister.html', {'produits': produits})
+
+
+
