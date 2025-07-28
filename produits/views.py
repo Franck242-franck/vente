@@ -121,5 +121,36 @@ def lister_produits(request):
         produits = Produit.objects.all()
     return render(request, 'produits/lister.html', {'produits': produits})
 
+from django.db.models import Sum
+from django.utils.timezone import now, timedelta
+from django.db.models.functions import TruncDay, TruncMonth
+from django.shortcuts import render
+from .models import Vente
+
+def dashboard_caisse(request):
+    # Ventes des 7 derniers jours
+    today = now().date()
+    seven_days_ago = today - timedelta(days=6)
+
+    ventes_journalieres = (
+        Vente.objects.filter(date_heure__date__gte=seven_days_ago)
+        .annotate(jour=TruncDay('date_heure'))
+        .values('jour')
+        .annotate(total=Sum('montant_total'))
+        .order_by('jour')
+    )
+
+    # Ventes par mois (derniers 6 mois)
+    ventes_mensuelles = (
+        Vente.objects.annotate(mois=TruncMonth('date_heure'))
+        .values('mois')
+        .annotate(total=Sum('montant_total'))
+        .order_by('-mois')[:6]
+    )
+
+    return render(request, 'produits/dashboard_caisse.html', {
+        'ventes_journalieres': ventes_journalieres,
+        'ventes_mensuelles': ventes_mensuelles,
+    })
 
 

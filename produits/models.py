@@ -22,6 +22,7 @@ class Vente(models.Model):
     quantite = models.PositiveIntegerField(default=1)
     montant_total = models.IntegerField(editable=False)
     date_heure = models.DateTimeField(auto_now_add=True)
+    caisse = models.ForeignKey('Caisse', null=True, blank=True, on_delete=models.SET_NULL)
 
     def save(self, *args, **kwargs):
         # Calcul du montant total uniquement (sans modifier le stock)
@@ -39,3 +40,13 @@ class HistoriqueVente(models.Model):
 
     def __str__(self):
         return f"{self.quantite} de {self.produit.nom} le {self.date_vente}"
+
+class Caisse(models.Model):
+    date_ouverture = models.DateField(auto_now_add=True)
+    date_fermeture = models.DateField(null=True, blank=True)
+    total_journalier = models.DecimalField(max_digits=12, decimal_places=2, default=0)
+    utilisateur = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    statut = models.CharField(max_length=10, choices=[('ouverte', 'Ouverte'), ('fermée', 'Fermée')], default='ouverte')
+
+    def __str__(self):
+        return f"Caisse du {self.date_ouverture} ({self.statut})"

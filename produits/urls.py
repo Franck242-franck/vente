@@ -12,4 +12,6 @@ urlpatterns = [
     path('ajouter_utilisateur/', views.ajouter_utilisateur, name='ajouter_utilisateur'),
     path("supprimer_utilisateur/<int:id>/", views.supprimer_utilisateur, name="supprimer_utilisateur"),
 
+    path('caisse/', views.dashboard_caisse, name='dashboard_caisse'),
+
 ]
