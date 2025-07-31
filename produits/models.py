@@ -18,7 +18,7 @@ from django.core.exceptions import ValidationError
 
 class Vente(models.Model):
     produit = models.ForeignKey(Produit, on_delete=models.CASCADE)
-    utilisateur = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
+    utilisateur = models.ForeignKey(User, on_delete=models.CASCADE)
     quantite = models.PositiveIntegerField(default=1)
     montant_total = models.IntegerField(editable=False)
     date_heure = models.DateTimeField(auto_now_add=True)

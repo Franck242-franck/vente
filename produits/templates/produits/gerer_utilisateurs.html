@@ -7,7 +7,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="manifest" href="{% static 'manifest.json' %}">
     <meta name="theme-color" content="#007bff">
-
     <style>
         body {
             font-family: Arial;
@@ -48,7 +47,6 @@
             background-color: #dc3545;
         }
 
-        /* Responsive pour petits écrans */
         @media screen and (max-width: 768px) {
             table, thead, tbody, th, td, tr {
                 display: block;
@@ -83,6 +81,7 @@
     </style>
 </head>
 <body>
+{% if user.is_staff %}
     <h2>Liste des utilisateurs</h2>
     <a href="{% url 'ajouter_utilisateur' %}" class="btn" style="margin-bottom: 15px;">➕ Ajouter un utilisateur</a>
     <table>
@@ -109,17 +108,21 @@
     </table>
     <br>
     <a href="{% url 'lister' %}" class="btn">← Retour à la liste des produits</a>
-    <script>
-      if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register("{% static 'js/service-worker.js' %}")
-          .then(function(registration) {
-            console.log("Service worker enregistré avec succès.");
-          })
-          .catch(function(error) {
-            console.log("Erreur lors de l'enregistrement du service worker :", error);
-          });
-      }
-    </script>
+{% else %}
+    <p style="color:red;">⛔ Accès réservé à l'administrateur.</p>
+    <a href="{% url 'lister' %}" class="btn">← Retour</a>
+{% endif %}
 
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register("{% static 'js/service-worker.js' %}")
+      .then(function(registration) {
+        console.log("Service worker enregistré avec succès.");
+      })
+      .catch(function(error) {
+        console.log("Erreur lors de l'enregistrement du service worker :", error);
+      });
+  }
+</script>
 </body>
 </html>
