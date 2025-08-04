@@ -1,128 +1,332 @@
 {% load static %}
-
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <title>Gérer les utilisateurs</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="manifest" href="{% static 'manifest.json' %}">
-    <meta name="theme-color" content="#007bff">
+    <meta name="theme-color" content="#4361ee">
     <style>
-        body {
-            font-family: Arial;
-            padding: 20px;
-            background-color: #f5f5f5;
-            margin: 0;
-        }
-        h2 {
-            color: #333;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 15px;
-            background-color: white;
-        }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 10px;
-            text-align: left;
-        }
-        th {
-            background-color: #007bff;
-            color: white;
-        }
-        tr:hover {
-            background-color: #f1f1f1;
-        }
-        .btn {
-            padding: 10px 15px;
-            background-color: #007bff;
-            color: white;
-            text-decoration: none;
-            border-radius: 4px;
-            display: inline-block;
-        }
-        .btn-danger {
-            background-color: #dc3545;
+        /* Variables CSS pour une cohérence de design */
+        :root {
+            --primary: #4361ee;
+            --primary-dark: #3a56d4;
+            --secondary: #3f37c9;
+            --accent: #4cc9f0;
+            --success: #06ffa5;
+            --danger: #ff6b6b;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --gray: #6c757d;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            --radius: 16px;
         }
 
+        /* Reset et styles de base */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 40px;
+            backdrop-filter: blur(10px);
+        }
+
+        /* Titre */
+        h2 {
+            color: var(--primary);
+            margin-bottom: 25px;
+            font-size: 2.2rem;
+            position: relative;
+            padding-bottom: 15px;
+        }
+
+        h2:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            border-radius: 2px;
+        }
+
+        /* Boutons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 24px;
+            background: linear-gradient(90deg, var(--primary), var(--primary-dark));
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(67, 97, 238, 0.3);
+            transition: all 0.3s ease;
+            margin-bottom: 25px;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(67, 97, 238, 0.4);
+            color: white;
+            text-decoration: none;
+        }
+
+        .btn-danger {
+            background: linear-gradient(90deg, var(--danger), #ff5252);
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+            padding: 8px 16px;
+            font-size: 0.9rem;
+        }
+
+        .btn-danger:hover {
+            box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
+        }
+
+        /* Tableau */
+        .table-container {
+            overflow-x: auto;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 30px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            background: white;
+        }
+
+        th, td {
+            padding: 16px 20px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        th {
+            background: linear-gradient(90deg, var(--primary), var(--primary-dark));
+            color: white;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-size: 0.9rem;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        tr:nth-child(even) {
+            background-color: rgba(79, 172, 254, 0.05);
+        }
+
+        tr:hover {
+            background-color: rgba(79, 172, 254, 0.1);
+            transform: scale(1.01);
+            transition: all 0.3s ease;
+        }
+
+        td {
+            font-weight: 500;
+        }
+
+        /* Badge Staff */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 6px 12px;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .badge-yes {
+            background: linear-gradient(90deg, var(--success), #00d4aa);
+            color: white;
+        }
+
+        .badge-no {
+            background: linear-gradient(90deg, var(--gray), #495057);
+            color: white;
+        }
+
+        /* Message d'accès refusé */
+        .access-denied {
+            text-align: center;
+            padding: 40px 20px;
+            background: rgba(255, 107, 107, 0.1);
+            border-radius: var(--radius);
+            margin-bottom: 30px;
+        }
+
+        .access-denied p {
+            color: var(--danger);
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        /* Responsive */
         @media screen and (max-width: 768px) {
+            .container {
+                padding: 25px;
+            }
+
+            h2 {
+                font-size: 1.8rem;
+            }
+
+            .table-container {
+                border-radius: var(--radius);
+                overflow: hidden;
+            }
+
             table, thead, tbody, th, td, tr {
                 display: block;
                 width: 100%;
             }
+
             thead {
                 display: none;
             }
+
             tr {
-                margin-bottom: 15px;
-                border: 1px solid #ddd;
-                border-radius: 6px;
-                background-color: white;
-                padding: 10px;
+                margin-bottom: 20px;
+                border-radius: var(--radius);
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+                background: white;
+                overflow: hidden;
             }
+
             td {
-                text-align: right;
-                padding-left: 50%;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 15px 20px;
+                border: none;
+                border-bottom: 1px solid #eee;
                 position: relative;
+                text-align: left;
             }
+
+            td:last-child {
+                border-bottom: none;
+            }
+
             td::before {
                 content: attr(data-label);
+                font-weight: 700;
+                color: var(--primary);
+                flex: 1;
+                text-transform: uppercase;
+                font-size: 0.8rem;
+                letter-spacing: 0.5px;
+            }
+
+            td::after {
+                content: '';
                 position: absolute;
-                left: 10px;
-                width: 45%;
-                padding-right: 10px;
-                font-weight: bold;
-                text-align: left;
-                color: #555;
+                left: 20px;
+                right: 20px;
+                bottom: 0;
+                height: 1px;
+                background: #eee;
+            }
+
+            td:last-child::after {
+                display: none;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+                margin-bottom: 15px;
             }
         }
     </style>
 </head>
 <body>
-{% if user.is_staff %}
-    <h2>Liste des utilisateurs</h2>
-    <a href="{% url 'ajouter_utilisateur' %}" class="btn" style="margin-bottom: 15px;">➕ Ajouter un utilisateur</a>
-    <table>
-        <thead>
-            <tr>
-                <th>Nom d'utilisateur</th>
-                <th>Email</th>
-                <th>Staff ?</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for user in utilisateurs %}
-            <tr>
-                <td data-label="Nom d'utilisateur">{{ user.username }}</td>
-                <td data-label="Email">{{ user.email }}</td>
-                <td data-label="Staff ?">{{ user.is_staff }}</td>
-                <td data-label="Actions">
-                    <a href="{% url 'supprimer_utilisateur' user.id %}" class="btn btn-danger">🗑️ Supprimer</a>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    <br>
-    <a href="{% url 'lister' %}" class="btn">← Retour à la liste des produits</a>
-{% else %}
-    <p style="color:red;">⛔ Accès réservé à l'administrateur.</p>
-    <a href="{% url 'lister' %}" class="btn">← Retour</a>
-{% endif %}
+    <div class="container">
+        {% if user.is_staff %}
+            <h2>👥 Gérer les utilisateurs</h2>
 
-<script>
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register("{% static 'js/service-worker.js' %}")
-      .then(function(registration) {
-        console.log("Service worker enregistré avec succès.");
-      })
-      .catch(function(error) {
-        console.log("Erreur lors de l'enregistrement du service worker :", error);
-      });
-  }
-</script>
+            <a href="{% url 'ajouter_utilisateur' %}" class="btn">➕ Ajouter un utilisateur</a>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nom d'utilisateur</th>
+                            <th>Email</th>
+                            <th>Staff ?</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in utilisateurs %}
+                        <tr>
+                            <td data-label="Nom d'utilisateur">{{ user.username }}</td>
+                            <td data-label="Email">{{ user.email }}</td>
+                            <td data-label="Staff ?">
+                                {% if user.is_staff %}
+                                    <span class="badge badge-yes">✓ Oui</span>
+                                {% else %}
+                                    <span class="badge badge-no">✗ Non</span>
+                                {% endif %}
+                            </td>
+                            <td data-label="Actions">
+                                <a href="{% url 'supprimer_utilisateur' user.id %}" class="btn btn-danger">🗑️ Supprimer</a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="text-center">Aucun utilisateur trouvé.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <a href="{% url 'lister' %}" class="btn">← Retour à la liste des produits</a>
+        {% else %}
+            <div class="access-denied">
+                <p>⛔ Accès réservé à l'administrateur.</p>
+                <a href="{% url 'lister' %}" class="btn">← Retour</a>
+            </div>
+        {% endif %}
+    </div>
+
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register("{% static 'js/service-worker.js' %}")
+                .then(function(registration) {
+                    console.log("Service worker enregistré avec succès.");
+                })
+                .catch(function(error) {
+                    console.log("Erreur lors de l'enregistrement du service worker :", error);
+                });
+        }
+    </script>
 </body>
 </html>

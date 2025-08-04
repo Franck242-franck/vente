@@ -6,34 +6,352 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Mes Produits</title>
   <link rel="manifest" href="{% static 'manifest.json' %}">
-  <meta name="theme-color" content="#007bff">
+  <meta name="theme-color" content="#4361ee">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-
   <style>
+    /* Variables CSS pour une cohérence de design */
+    :root {
+      --primary: #4361ee;
+      --primary-dark: #3a56d4;
+      --secondary: #3f37c9;
+      --accent: #4cc9f0;
+      --success: #06ffa5;
+      --danger: #ff6b6b;
+      --light: #f8f9fa;
+      --dark: #212529;
+      --gray: #6c757d;
+      --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      --radius: 16px;
+    }
+    /* Reset et styles de base */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
     body {
-      background: #f0f0f0;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      min-height: 100vh;
       padding: 20px;
+      color: var(--dark);
+      line-height: 1.6;
     }
-    table {
-      background: #fff;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 30px;
+      backdrop-filter: blur(10px);
     }
-    .nav a, .btn-vente, .logout {
-      margin: 5px;
+    /* Navigation */
+    .nav {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-bottom: 30px;
+    }
+    .nav a, .nav form {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 20px;
+      border-radius: 50px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+    .nav a {
+      background: linear-gradient(90deg, var(--success), #00d4aa);
+      color: white;
+    }
+    .nav a:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 15px rgba(6, 255, 165, 0.3);
+      text-decoration: none;
+      color: white;
     }
     .logout {
-      background: #dc3545 !important;
+      background: linear-gradient(90deg, var(--danger), #ff5252) !important;
+      border: none;
+      color: white;
     }
-    .nav-link:hover {
-      text-decoration: underline;
+    .logout:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 15px rgba(255, 107, 107, 0.3);
+      color: white;
     }
+    /* Titre */
+    h1 {
+      color: var(--primary);
+      text-align: center;
+      margin-bottom: 30px;
+      font-size: 2.5rem;
+      position: relative;
+      padding-bottom: 15px;
+    }
+    h1:after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100px;
+      height: 4px;
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+      border-radius: 2px;
+    }
+
+    /* Section statistique */
+    .stats-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+    .stat-card {
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: white;
+      border-radius: var(--radius);
+      padding: 20px;
+      text-align: center;
+      box-shadow: var(--shadow);
+      transition: transform 0.3s ease;
+    }
+    .stat-card:hover {
+      transform: translateY(-5px);
+    }
+    .stat-icon {
+      font-size: 2rem;
+      margin-bottom: 10px;
+    }
+    .stat-value {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin: 10px 0;
+    }
+    .stat-label {
+      font-size: 1rem;
+      opacity: 0.9;
+    }
+
+    /* Bouton vente */
+    .btn-vente {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin: 0 auto 30px;
+      padding: 14px 28px;
+      background: linear-gradient(90deg, var(--primary), var(--primary-dark));
+      color: white;
+      text-decoration: none;
+      font-weight: 600;
+      border-radius: 50px;
+      box-shadow: 0 4px 15px rgba(67, 97, 238, 0.3);
+      transition: all 0.3s ease;
+      font-size: 1.1rem;
+    }
+    .btn-vente:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(67, 97, 238, 0.4);
+      color: white;
+      text-decoration: none;
+    }
+    /* Formulaire de recherche */
+    .search-form {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 30px;
+      justify-content: center;
+    }
+    .search-input {
+      flex: 1;
+      min-width: 250px;
+      padding: 12px 20px;
+      border: 2px solid transparent;
+      border-radius: 50px;
+      background: white;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+      transition: all 0.3s ease;
+      font-weight: 500;
+    }
+    .search-input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 4px 15px rgba(67, 97, 238, 0.2);
+    }
+    .search-btn {
+      padding: 12px 24px;
+      background: linear-gradient(90deg, var(--primary), var(--primary-dark));
+      color: white;
+      border: none;
+      border-radius: 50px;
+      font-weight: 600;
+      box-shadow: 0 4px 15px rgba(67, 97, 238, 0.3);
+      transition: all 0.3s ease;
+    }
+    .search-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(67, 97, 238, 0.4);
+      color: white;
+    }
+    /* Tableau */
+    .table-container {
+      overflow-x: auto;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      margin-bottom: 20px;
+    }
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      background: white;
+    }
+    th, td {
+      padding: 16px 20px;
+      text-align: center;
+      border-bottom: 1px solid #eee;
+    }
+    th {
+      background: linear-gradient(90deg, var(--primary), var(--primary-dark));
+      color: white;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-size: 0.9rem;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    tr:nth-child(even) {
+      background-color: rgba(79, 172, 254, 0.05);
+    }
+    tr:hover {
+      background-color: rgba(79, 172, 254, 0.1);
+      transform: scale(1.01);
+      transition: all 0.3s ease;
+    }
+    td {
+      font-weight: 500;
+    }
+    /* Actions */
+    .action-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      margin: 0 5px;
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+    .edit-link {
+      background: linear-gradient(90deg, #ffd166, #ff9e00);
+      color: white;
+    }
+    .edit-link:hover {
+      transform: scale(1.1);
+      box-shadow: 0 4px 10px rgba(255, 158, 0, 0.3);
+    }
+    .delete-link {
+      background: linear-gradient(90deg, var(--danger), #ff5252);
+      color: white;
+    }
+    .delete-link:hover {
+      transform: scale(1.1);
+      box-shadow: 0 4px 10px rgba(255, 107, 107, 0.3);
+    }
+    /* Responsive */
     @media (max-width: 768px) {
+      .container {
+        padding: 20px;
+      }
+      h1 {
+        font-size: 2rem;
+      }
+      .stats-container {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .stat-value {
+        font-size: 2rem;
+      }
       .nav {
         flex-direction: column !important;
         align-items: stretch !important;
       }
       .nav a, .nav form {
         width: 100%;
+        margin-bottom: 10px;
+      }
+      .search-form {
+        flex-direction: column;
+      }
+      .search-input {
+        width: 100%;
+      }
+      .table-container {
+        border-radius: var(--radius);
+        overflow: hidden;
+      }
+      table, thead, tbody, th, td, tr {
+        display: block;
+        width: 100%;
+      }
+      thead {
+        display: none;
+      }
+      tr {
+        margin-bottom: 20px;
+        border-radius: var(--radius);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        background: white;
+        overflow: hidden;
+      }
+      td {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 20px;
+        border: none;
+        border-bottom: 1px solid #eee;
+        position: relative;
+        text-align: left;
+      }
+      td:last-child {
+        border-bottom: none;
+      }
+      td::before {
+        content: attr(data-label);
+        font-weight: 700;
+        color: var(--primary);
+        flex: 1;
+        text-transform: uppercase;
+        font-size: 0.8rem;
+        letter-spacing: 0.5px;
+      }
+      td::after {
+        content: '';
+        position: absolute;
+        left: 20px;
+        right: 20px;
+        bottom: 0;
+        height: 1px;
+        background: #eee;
+      }
+      td:last-child::after {
+        display: none;
+      }
+      .action-link {
+        margin: 0 3px;
       }
     }
   </style>
@@ -41,37 +359,60 @@
 <body>
   <div class="container">
     <!-- Navigation -->
-    <div class="d-flex flex-column flex-md-row justify-content-end align-items-start mb-3 nav">
-      <a href="{% url 'ajouter' %}" class="btn btn-success">➕ Ajouter Produit</a>
-      <a href="{% url 'historique' %}" class="btn btn-success">📜 Historique Ventes</a>
+    <div class="nav">
+      <a href="{% url 'ajouter' %}">➕ Ajouter Produit</a>
+      <a href="{% url 'historique' %}">📜 Historique Ventes</a>
       {% if user.is_staff %}
-        <a href="{% url 'gerer_utilisateurs' %}" class="btn btn-success">⚙️ Gérer Utilisateurs</a>
+        <a href="{% url 'gerer_utilisateurs' %}">⚙️ Gérer Utilisateurs</a>
       {% endif %}
       <form action="{% url 'logout' %}" method="post">
         {% csrf_token %}
-        <button type="submit" class="btn logout text-white">Déconnexion</button>
+        <button type="submit" class="logout">Déconnexion</button>
       </form>
     </div>
 
     <!-- Titre -->
-    <h1 class="mb-4 text-center">Mes Produits</h1>
+    <h1>📦 Mes Produits</h1>
+
+    <!-- Section statistique -->
+    <div class="stats-container">
+      <div class="stat-card">
+        <div class="stat-icon">📦</div>
+        <div class="stat-value">{{ total_produits }}</div>
+        <div class="stat-label">Total produits</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">📊</div>
+        <div class="stat-value">{{ produits_en_stock }}</div>
+        <div class="stat-label">En stock</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">✅</div>
+        <div class="stat-value">{{ produits_vendus }}</div>
+        <div class="stat-label">Vendus</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">💰</div>
+        <div class="stat-value">{{ valeur_stock }} FCFA</div>
+        <div class="stat-label">Valeur du stock</div>
+      </div>
+    </div>
 
     <!-- Bouton vente -->
-    <div class="text-center mb-3">
-      <a href="{% url 'enregistrer_vente' %}" class="btn btn-primary btn-vente">🛒 Enregistrer une vente</a>
+    <div class="text-center">
+      <a href="{% url 'enregistrer_vente' %}" class="btn-vente">🛒 Enregistrer une vente</a>
     </div>
 
     <!-- Formulaire de recherche -->
-    <form method="get" action="{% url 'lister' %}" class="mb-4 d-flex flex-column flex-md-row justify-content-center align-items-center">
-      <input type="text" name="q" class="form-control w-100 w-md-50 me-md-2 mb-2 mb-md-0"
-             placeholder="Tapez le nom d’un produit..." value="{{ request.GET.q }}">
-      <button type="submit" class="btn btn-primary">🔍 Rechercher</button>
+    <form method="get" action="{% url 'lister' %}" class="search-form">
+      <input type="text" name="q" class="search-input" placeholder="Tapez le nom d'un produit..." value="{{ request.GET.q }}">
+      <button type="submit" class="search-btn">🔍 Rechercher</button>
     </form>
 
     <!-- Tableau des produits -->
-    <div class="table-responsive">
-      <table class="table table-bordered text-center align-middle">
-        <thead class="table-primary">
+    <div class="table-container">
+      <table>
+        <thead>
           <tr>
             <th>Nom</th>
             <th>Quantité</th>
@@ -83,18 +424,18 @@
         <tbody>
           {% for produit in produits %}
           <tr>
-            <td>{{ produit.nom }}</td>
-            <td>{{ produit.quantite }}</td>
-            <td>{{ produit.prix }} FCFA</td>
-            <td>{{ produit.vendu|yesno:"✅,❌" }}</td>
-            <td>
-              <a href="{% url 'modifier' produit.id %}" title="Modifier">✏️</a>
-              <a href="{% url 'supprimer' produit.id %}" title="Supprimer">🗑️</a>
+            <td data-label="Nom">{{ produit.nom }}</td>
+            <td data-label="Quantité">{{ produit.quantite }}</td>
+            <td data-label="Prix">{{ produit.prix }} FCFA</td>
+            <td data-label="Vendu">{{ produit.vendu|yesno:"✅,❌" }}</td>
+            <td data-label="Actions">
+              <a href="{% url 'modifier' produit.id %}" class="action-link edit-link" title="Modifier">✏️</a>
+              <a href="{% url 'supprimer' produit.id %}" class="action-link delete-link" title="Supprimer">🗑️</a>
             </td>
           </tr>
           {% empty %}
           <tr>
-            <td colspan="5" class="text-muted">🔍 Aucun produit trouvé avec ce nom.</td>
+            <td colspan="5" class="text-center">🔍 Aucun produit trouvé avec ce nom.</td>
           </tr>
           {% endfor %}
         </tbody>

@@ -4,87 +4,224 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="manifest" href="{% static 'manifest.json' %}">
-  <meta name="theme-color" content="#007bff">
-
-  <title>Connexion</title>
+  <meta name="theme-color" content="#4361ee">
+  <title>Connexion - venteApp</title>
   <style>
+    /* Variables CSS pour une cohérence de design */
+    :root {
+      --primary: #4361ee;
+      --primary-dark: #3a56d4;
+      --secondary: #3f37c9;
+      --accent: #4cc9f0;
+      --success: #06ffa5;
+      --danger: #ff6b6b;
+      --light: #f8f9fa;
+      --dark: #212529;
+      --gray: #6c757d;
+      --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      --radius: 16px;
+    }
+
+    /* Reset et styles de base */
     * {
+      margin: 0;
+      padding: 0;
       box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
 
     body {
-      font-family: Arial, sans-serif;
-      background: #f0f0f0;
-      margin: 0;
-      padding: 0;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      min-height: 100vh;
+      padding: 20px;
+      color: var(--dark);
+      line-height: 1.6;
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
-      height: 100vh;
     }
 
     .container {
-      width: 90%;
-      max-width: 400px;
-      background: white;
-      padding: 30px;
-      border-radius: 10px;
-      box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 450px;
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 40px;
+      backdrop-filter: blur(10px);
+      position: relative;
+      overflow: hidden;
     }
 
-    h1 {
+    /* Nom de l'application */
+    .app-name {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(90deg, var(--primary), var(--primary-dark));
+      color: white;
       text-align: center;
-      margin-bottom: 20px;
+      padding: 12px 0;
+      font-weight: 700;
+      font-size: 1.1rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    /* Titre */
+    h1 {
+      color: var(--primary);
+      text-align: center;
+      margin: 40px 0 30px;
+      font-size: 2.2rem;
+      position: relative;
+      padding-bottom: 15px;
+    }
+
+    h1:after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80px;
+      height: 4px;
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+      border-radius: 2px;
+    }
+
+    /* Formulaire */
+    form {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
     }
 
     input[type="text"],
     input[type="password"] {
       width: 100%;
-      padding: 12px;
-      margin-bottom: 15px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      font-size: 16px;
+      padding: 16px 20px;
+      margin-bottom: 20px;
+      border: 2px solid transparent;
+      border-radius: 50px;
+      background: white;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+      transition: all 0.3s ease;
+      font-size: 1rem;
+      font-weight: 500;
+      color: var(--dark);
     }
 
+    input[type="text"]:focus,
+    input[type="password"]:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 4px 15px rgba(67, 97, 238, 0.2);
+    }
+
+    /* Bouton */
     button {
-      width: 100%;
-      padding: 12px;
-      background: #007BFF;
-      color: white;
+      background: linear-gradient(90deg, var(--primary), var(--primary-dark));
       border: none;
-      border-radius: 5px;
-      font-size: 16px;
-      font-weight: bold;
+      padding: 16px 20px;
+      color: white;
+      font-weight: 600;
+      font-size: 1.1rem;
+      border-radius: 50px;
       cursor: pointer;
-      transition: background 0.3s ease;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(67, 97, 238, 0.3);
+      margin-top: 10px;
     }
 
     button:hover {
-      background: #0056b3;
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(67, 97, 238, 0.4);
     }
 
-    @media (max-width: 400px) {
-      .container {
-        padding: 20px;
+    button:active {
+      transform: translateY(1px);
+    }
+
+    /* Icônes décoratives */
+    .icon-container {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+
+    .icon {
+      width: 80px;
+      height: 80px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.5rem;
+      color: white;
+      box-shadow: 0 10px 20px rgba(67, 97, 238, 0.3);
+    }
+
+    /* Responsive */
+    @media (max-width: 600px) {
+      body {
+        padding: 15px;
       }
 
-      input, button {
-        font-size: 15px;
+      .container {
+        padding: 30px 20px;
+        padding-top: 60px;
+      }
+
+      .app-name {
+        font-size: 1rem;
+        padding: 10px 0;
+      }
+
+      h1 {
+        font-size: 1.8rem;
+        margin: 30px 0 20px;
+      }
+
+      input[type="text"],
+      input[type="password"] {
+        padding: 14px 16px;
+      }
+
+      button {
+        padding: 14px 16px;
+        font-size: 1rem;
+      }
+
+      .icon {
+        width: 70px;
+        height: 70px;
+        font-size: 2rem;
       }
     }
   </style>
 </head>
 <body>
   <div class="container">
+    <div class="app-name">venteApp</div>
+
+    <div class="icon-container">
+      <div class="icon">🔐</div>
+    </div>
+
     <h1>Connexion</h1>
+
     <form method="post">
       {% csrf_token %}
-      <input type="text" name="username" placeholder="Nom d’utilisateur" required autofocus />
+      <input type="text" name="username" placeholder="Nom d'utilisateur" required autofocus />
       <input type="password" name="password" placeholder="Mot de passe" required />
       <button type="submit">Se connecter</button>
     </form>
   </div>
+
   <script>
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register("{% static 'js/service-worker.js' %}")
@@ -96,6 +233,5 @@
         });
     }
   </script>
-
 </body>
 </html>

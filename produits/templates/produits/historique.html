@@ -4,120 +4,281 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="manifest" href="{% static 'manifest.json' %}">
-  <meta name="theme-color" content="#007bff">
-
+  <meta name="theme-color" content="#4361ee">
   <title>Historique des ventes</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f9f9f9;
-      padding: 20px;
+    /* Variables CSS pour une cohérence de design */
+    :root {
+      --primary: #4361ee;
+      --primary-dark: #3a56d4;
+      --secondary: #3f37c9;
+      --accent: #4cc9f0;
+      --light: #f8f9fa;
+      --dark: #212529;
+      --gray: #6c757d;
+      --success: #06ffa5;
+      --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      --radius: 16px;
+    }
+
+    /* Reset et styles de base */
+    * {
       margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      min-height: 100vh;
+      padding: 20px;
+      color: var(--dark);
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 40px;
+      backdrop-filter: blur(10px);
     }
 
     h1 {
+      color: var(--primary);
       text-align: center;
-      color: #333;
-      margin-bottom: 25px;
+      margin-bottom: 30px;
+      font-size: 2.5rem;
+      position: relative;
+      padding-bottom: 15px;
     }
 
+    h1:after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100px;
+      height: 4px;
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+      border-radius: 2px;
+    }
+
+    /* Bouton caisse */
+    .caisse-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin: 0 auto 30px;
+      padding: 14px 28px;
+      background: linear-gradient(90deg, var(--success), #00d4aa);
+      color: white;
+      text-decoration: none;
+      font-weight: 600;
+      border-radius: 50px;
+      box-shadow: 0 4px 15px rgba(6, 255, 165, 0.3);
+      transition: all 0.3s ease;
+      font-size: 1.1rem;
+    }
+
+    .caisse-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(6, 255, 165, 0.4);
+    }
+
+    /* Tableau */
     .table-container {
       overflow-x: auto;
-      background: white;
-      border-radius: 8px;
-      box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      margin-bottom: 30px;
     }
 
     table {
       width: 100%;
-      border-collapse: collapse;
-      min-width: 600px; /* empêche la casse sur petit écran */
+      border-collapse: separate;
+      border-spacing: 0;
+      background: white;
     }
 
     th, td {
-      padding: 12px 15px;
-      border-bottom: 1px solid #ddd;
+      padding: 16px 20px;
       text-align: center;
+      border-bottom: 1px solid #eee;
     }
 
     th {
-      background-color: #007BFF;
+      background: linear-gradient(90deg, var(--primary), var(--primary-dark));
       color: white;
+      font-weight: 600;
       text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-size: 0.9rem;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    tr:nth-child(even) {
+      background-color: rgba(79, 172, 254, 0.05);
     }
 
     tr:hover {
-      background-color: #f1f1f1;
+      background-color: rgba(79, 172, 254, 0.1);
+      transform: scale(1.01);
+      transition: all 0.3s ease;
     }
 
-    a {
-      display: inline-block;
+    td {
+      font-weight: 500;
+    }
+
+    /* Lien retour */
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
       margin-top: 20px;
+      padding: 12px 24px;
+      background: linear-gradient(90deg, var(--primary), var(--primary-dark));
+      color: white;
       text-decoration: none;
-      color: #007BFF;
-      font-weight: bold;
+      border-radius: 50px;
+      font-weight: 600;
+      box-shadow: 0 4px 15px rgba(67, 97, 238, 0.3);
+      transition: all 0.3s ease;
     }
 
-    a:hover {
-      text-decoration: underline;
+    .back-link:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(67, 97, 238, 0.4);
     }
 
     /* Responsive */
-    @media (max-width: 600px) {
+    @media (max-width: 768px) {
+      .container {
+        padding: 25px;
+      }
+
       h1 {
-        font-size: 20px;
+        font-size: 2rem;
       }
 
-      th, td {
-        font-size: 14px;
-        padding: 10px;
+      .caisse-btn {
+        font-size: 1rem;
+        padding: 12px 24px;
       }
 
-      a {
-        font-size: 14px;
-        margin-top: 15px;
+      .table-container {
+        border-radius: var(--radius);
+        overflow: hidden;
+      }
+
+      table, thead, tbody, th, td, tr {
+        display: block;
+        width: 100%;
+      }
+
+      thead {
+        display: none;
+      }
+
+      tr {
+        margin-bottom: 20px;
+        border-radius: var(--radius);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        background: white;
+        overflow: hidden;
+      }
+
+      td {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 20px;
+        border: none;
+        border-bottom: 1px solid #eee;
+        position: relative;
+        text-align: left;
+      }
+
+      td:last-child {
+        border-bottom: none;
+      }
+
+      td::before {
+        content: attr(data-label);
+        font-weight: 700;
+        color: var(--primary);
+        flex: 1;
+        text-transform: uppercase;
+        font-size: 0.8rem;
+        letter-spacing: 0.5px;
+      }
+
+      td::after {
+        content: '';
+        position: absolute;
+        left: 20px;
+        right: 20px;
+        bottom: 0;
+        height: 1px;
+        background: #eee;
+      }
+
+      td:last-child::after {
+        display: none;
       }
     }
   </style>
 </head>
 <body>
+  <div class="container">
+    <h1>📈 Historique des ventes</h1>
 
-  <h1>Historique des ventes</h1>
-  <a href="{% url 'dashboard_caisse' %}" class="btn btn-success rounded-pill px-4 py-2 shadow-sm">
-    💰 Accéder à la Caisse
-  </a>
-  <div class="table-container">
-    <table>
-      <thead>
-        <tr>
-          <th>Produit</th>
-          <th>Quantité</th>
-          <th>Prix unitaire</th>
-          <th>Montant total</th>
-          <th>Utilisateur</th>
-          <th>Date & Heure</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for vente in ventes %}
-        <tr>
-          <td>{{ vente.produit.nom }}</td>
-          <td>{{ vente.quantite }}</td>
-          <td>{{ vente.produit.prix }}</td>
-          <td>{{ vente.montant_total }}</td>
-          <td>{{ vente.utilisateur.username }}</td>
-          <td>{{ vente.date_heure|date:"d/m/Y H:i:s" }}</td>
-        </tr>
-        {% empty %}
-        <tr>
-          <td colspan="6">Aucune vente enregistrée.</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+    <a href="{% url 'dashboard_caisse' %}" class="caisse-btn">
+      💰 Accéder à la Caisse
+    </a>
+
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Produit</th>
+            <th>Quantité</th>
+            <th>Prix unitaire</th>
+            <th>Montant total</th>
+            <th>Utilisateur</th>
+            <th>Date & Heure</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for vente in ventes %}
+          <tr>
+            <td data-label="Produit">{{ vente.produit.nom }}</td>
+            <td data-label="Quantité">{{ vente.quantite }}</td>
+            <td data-label="Prix unitaire">{{ vente.produit.prix }}</td>
+            <td data-label="Montant total">{{ vente.montant_total }}</td>
+            <td data-label="Utilisateur">{{ vente.utilisateur.username }}</td>
+            <td data-label="Date & Heure">{{ vente.date_heure|date:"d/m/Y H:i:s" }}</td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="6">Aucune vente enregistrée.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <a href="{% url 'lister' %}" class="back-link">← Retour à la liste des produits</a>
   </div>
 
-  <a href="{% url 'lister' %}">← Retour à la liste des produits</a>
   <script>
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register("{% static 'js/service-worker.js' %}")
@@ -129,6 +290,5 @@
         });
     }
   </script>
-
 </body>
 </html>

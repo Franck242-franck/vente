@@ -139,7 +139,6 @@ def supprimer_utilisateur(request, id):
 @login_required
 def lister_produits(request):
     query = request.GET.get('q')
-
     # Admin voit tout, utilisateur voit ses produits
     if request.user.is_superuser:
         produits = Produit.objects.all()
@@ -150,8 +149,19 @@ def lister_produits(request):
     if query:
         produits = produits.filter(nom__icontains=query)
 
-    return render(request, "produits/lister.html", {"produits": produits})
+    # Calcul des statistiques
+    total_produits = produits.count()
+    produits_en_stock = produits.filter(vendu=False).count()
+    produits_vendus = produits.filter(vendu=True).count()
+    valeur_stock = sum(produit.prix * produit.quantite for produit in produits)
 
+    return render(request, "produits/lister.html", {
+        "produits": produits,
+        "total_produits": total_produits,
+        "produits_en_stock": produits_en_stock,
+        "produits_vendus": produits_vendus,
+        "valeur_stock": valeur_stock
+    })
 
 from django.db.models import Sum
 from django.utils.timezone import now, timedelta

@@ -4,131 +4,279 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="manifest" href="{% static 'manifest.json' %}">
-  <meta name="theme-color" content="#007bff">
-
+  <meta name="theme-color" content="#4361ee">
   <title>Enregistrer une vente</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f0f4f8;
-      padding: 15px;
+    /* Variables CSS pour une cohérence de design */
+    :root {
+      --primary: #4361ee;
+      --primary-dark: #3a56d4;
+      --secondary: #3f37c9;
+      --accent: #4cc9f0;
+      --success: #06ffa5;
+      --danger: #ff6b6b;
+      --light: #f8f9fa;
+      --dark: #212529;
+      --gray: #6c757d;
+      --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      --radius: 16px;
+    }
+
+    /* Reset et styles de base */
+    * {
       margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
-    h1 {
-      color: #333;
-      text-align: center;
-      font-size: 1.8em;
-      margin-bottom: 20px;
-    }
-    form {
-      max-width: 500px;
-      margin: 0 auto;
-      background: white;
+
+    body {
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      min-height: 100vh;
       padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+      color: var(--dark);
+      line-height: 1.6;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
     }
+
+    .container {
+      width: 100%;
+      max-width: 500px;
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 40px;
+      backdrop-filter: blur(10px);
+    }
+
+    /* Titre */
+    h1 {
+      color: var(--primary);
+      text-align: center;
+      margin-bottom: 30px;
+      font-size: 2.2rem;
+      position: relative;
+      padding-bottom: 15px;
+    }
+
+    h1:after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80px;
+      height: 4px;
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+      border-radius: 2px;
+    }
+
+    /* Messages */
+    .messages {
+      background: rgba(255, 107, 107, 0.1);
+      border-left: 4px solid var(--danger);
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 25px;
+      font-size: 0.95rem;
+      color: var(--danger);
+      animation: fadeIn 0.5s ease;
+    }
+
+    .messages ul {
+      list-style: none;
+      padding-left: 0;
+    }
+
+    .messages li {
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+    }
+
+    .messages li:before {
+      content: "⚠️";
+      margin-right: 8px;
+    }
+
+    /* Formulaire */
+    form {
+      width: 100%;
+    }
+
     label {
       display: block;
-      margin-bottom: 8px;
-      font-weight: bold;
-      color: #555;
+      margin-bottom: 10px;
+      font-weight: 600;
+      color: var(--primary);
+      font-size: 1rem;
     }
+
     select,
     input[type="number"] {
       width: 100%;
-      padding: 12px;
-      margin-bottom: 15px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      box-sizing: border-box;
-      font-size: 1em;
-    }
-    #montant {
-      font-size: 1.2em;
-      color: #000;
-      font-weight: bold;
-      text-align: center;
-      margin-top: 10px;
-    }
-    button {
-      background-color: #28a745;
-      border: none;
       padding: 14px 20px;
-      color: white;
-      font-weight: bold;
-      font-size: 1em;
-      border-radius: 5px;
-      cursor: pointer;
-      width: 100%;
-      transition: background-color 0.3s ease;
-    }
-    button:hover {
-      background-color: #218838;
-    }
-    a {
-      display: block;
-      margin-top: 20px;
-      text-align: center;
-      color: #007BFF;
-      text-decoration: none;
-      font-size: 1em;
-    }
-    a:hover {
-      text-decoration: underline;
-    }
-    .messages {
-      max-width: 500px;
-      margin: 10px auto;
-      color: red;
-      font-size: 0.95em;
-      padding: 0 10px;
+      margin-bottom: 20px;
+      border: 2px solid transparent;
+      border-radius: 50px;
+      background: white;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+      transition: all 0.3s ease;
+      font-size: 1rem;
+      font-weight: 500;
+      color: var(--dark);
     }
 
-    /* Responsive mobile */
+    select:focus,
+    input[type="number"]:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 4px 15px rgba(67, 97, 238, 0.2);
+    }
+
+    /* Montant total */
+    #montant {
+      font-size: 1.4rem;
+      color: var(--primary);
+      font-weight: 700;
+      text-align: center;
+      margin: 25px 0;
+      padding: 15px;
+      background: linear-gradient(90deg, rgba(67, 97, 238, 0.1), rgba(76, 201, 240, 0.1));
+      border-radius: 50px;
+      box-shadow: 0 4px 15px rgba(67, 97, 238, 0.1);
+      transition: all 0.3s ease;
+    }
+
+    #montant:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(67, 97, 238, 0.15);
+    }
+
+    /* Bouton */
+    button {
+      background: linear-gradient(90deg, var(--success), #00d4aa);
+      border: none;
+      padding: 16px 20px;
+      color: white;
+      font-weight: 600;
+      font-size: 1.1rem;
+      border-radius: 50px;
+      cursor: pointer;
+      width: 100%;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(6, 255, 165, 0.3);
+      margin-top: 10px;
+    }
+
+    button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(6, 255, 165, 0.4);
+    }
+
+    button:active {
+      transform: translateY(1px);
+    }
+
+    /* Lien retour */
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 30px;
+      padding: 12px 24px;
+      background: linear-gradient(90deg, var(--primary), var(--primary-dark));
+      color: white;
+      text-decoration: none;
+      border-radius: 50px;
+      font-weight: 600;
+      box-shadow: 0 4px 15px rgba(67, 97, 238, 0.3);
+      transition: all 0.3s ease;
+      width: 100%;
+    }
+
+    .back-link:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(67, 97, 238, 0.4);
+      color: white;
+    }
+
+    /* Responsive */
     @media (max-width: 600px) {
       body {
-        padding: 10px;
-      }
-      form {
         padding: 15px;
       }
-      h1 {
-        font-size: 1.5em;
+
+      .container {
+        padding: 30px 20px;
       }
-      button {
+
+      h1 {
+        font-size: 1.8rem;
+      }
+
+      select,
+      input[type="number"] {
+        padding: 12px 16px;
+      }
+
+      #montant {
+        font-size: 1.2rem;
         padding: 12px;
+      }
+
+      button {
+        padding: 14px 16px;
+        font-size: 1rem;
+      }
+    }
+
+    /* Animation */
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
       }
     }
   </style>
 </head>
 <body>
+  <div class="container">
+    <h1>💰 Enregistrer une vente</h1>
 
-  <h1>Enregistrer une vente</h1>
+    {% if messages %}
+      <div class="messages">
+        <ul>
+          {% for message in messages %}
+            <li>{{ message }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+    {% endif %}
 
-  {% if messages %}
-    <ul class="messages">
-      {% for message in messages %}
-        <li>{{ message }}</li>
-      {% endfor %}
-    </ul>
-  {% endif %}
+    <form method="post">
+      {% csrf_token %}
+      <label for="id_produit">Produit :</label>
+      {{ form.produit }}
 
-  <form method="post">
-    {% csrf_token %}
+      <label for="id_quantite">Quantité vendue :</label>
+      {{ form.quantite }}
 
-    <label for="id_produit">Produit :</label>
-    {{ form.produit }}
+      <div id="montant">Montant total : 0 FCFA</div>
 
-    <label for="id_quantite">Quantité vendue :</label>
-    {{ form.quantite }}
+      <button type="submit">✅ Enregistrer la vente</button>
+    </form>
 
-    <div id="montant">Montant total : 0 FCFA</div>
-
-    <button type="submit">Enregistrer</button>
-  </form>
-
-  <a href="{% url 'lister' %}">← Retour à la liste des produits</a>
+    <a href="{% url 'lister' %}" class="back-link">← Retour à la liste des produits</a>
+  </div>
 
   <script>
     const prixProduits = {
@@ -136,7 +284,6 @@
         "{{ produit.id }}": {{ produit.prix }}{% if not forloop.last %},{% endif %}
       {% endfor %}
     };
-
     const selectProduit = document.getElementById("id_produit");
     const inputQuantite = document.getElementById("id_quantite");
     const montantDiv = document.getElementById("montant");
@@ -147,6 +294,12 @@
       const prix = prixProduits[produitId] || 0;
       const total = quantite * prix;
       montantDiv.textContent = `Montant total : ${total} FCFA`;
+
+      // Animation du montant
+      montantDiv.style.transform = "scale(1.05)";
+      setTimeout(() => {
+        montantDiv.style.transform = "scale(1)";
+      }, 200);
     }
 
     selectProduit.addEventListener("change", updateMontant);
@@ -155,6 +308,7 @@
     // Initialisation
     updateMontant();
   </script>
+
   <script>
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register("{% static 'js/service-worker.js' %}")
@@ -166,6 +320,5 @@
         });
     }
   </script>
-
 </body>
 </html>
