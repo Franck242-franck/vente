@@ -42,6 +42,11 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'produits',
+# Django REST Framework + JWT
+    'rest_framework',
+    'rest_framework_simplejwt',
+    # CORS
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
@@ -145,3 +150,14 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/'  # où rediriger après login
 LOGOUT_REDIRECT_URL = '/login/'  # où rediriger après logout
+
+
+# 2) Configuration DRF avec JWT par défaut
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    )
+}
+
+# 3) Autoriser CORS pour ton app mobile
+CORS_ALLOW_ALL_ORIGINS = True  # Pour tests
