@@ -1,0 +1,14 @@
+name: Keep Render Alive
+
+on:
+  schedule:
+    - cron: "*/5 * * * *"   # toutes les 5 minutes
+  workflow_dispatch:        # permet aussi de lancer manuellement
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Render App
+        run: |
+          curl -s https://tonapp.onrender.com/ > /dev/null
