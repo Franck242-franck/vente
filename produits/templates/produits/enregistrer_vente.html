@@ -309,16 +309,51 @@
     updateMontant();
   </script>
 
-  <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register("{% static 'js/service-worker.js' %}")
-        .then(function(registration) {
-          console.log("Service worker enregistré avec succès.");
-        })
-        .catch(function(error) {
-          console.log("Erreur lors de l'enregistrement du service worker :", error);
-        });
+ <!-- Chargement du script pour la gestion des ventes hors ligne -->
+<script src="{% static 'js/offline-sales.js' %}"></script>
+
+<!-- Script inline pour intercepter la soumission du formulaire -->
+<script>
+document.querySelector("form").addEventListener("submit", function(e) {
+    e.preventDefault();
+    const produit = document.getElementById("id_produit").value;
+    const quantite = parseInt(document.getElementById("id_quantite").value) || 0;
+    const montant = quantite * (parseInt(document.getElementById("id_produit").selectedOptions[0].dataset.prix) || 0);
+
+    if (navigator.onLine) {
+        fetch("/api/ventes/ajouter/", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": getCookie("csrftoken")
+            },
+            body: JSON.stringify({ produit, quantite, montant })
+        }).then(() => alert("Vente enregistrée !"))
+          .catch(() => {
+              ajouterVenteOffline(produit, quantite, montant);
+              alert("Vente stockée offline !");
+          });
+    } else {
+        ajouterVenteOffline(produit, quantite, montant);
+        alert("Vente stockée offline !");
     }
-  </script>
+
+    this.reset();
+});
+</script>
+
+<!-- Service Worker -->
+<script>
+  if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register("{% static 'js/service-worker.js' %}")
+          .then(function(registration) {
+              console.log("Service worker enregistré avec succès.");
+          })
+          .catch(function(error) {
+              console.log("Erreur lors de l'enregistrement du service worker :", error);
+          });
+  }
+</script>
+
 </body>
 </html>

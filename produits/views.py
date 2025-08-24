@@ -197,3 +197,28 @@ def dashboard_caisse(request):
         'ventes_journalieres': ventes_journalieres,
         'ventes_mensuelles': ventes_mensuelles,
     })
+
+
+
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+import json
+from .models import Vente, Produit
+
+@csrf_exempt
+def ajouter_vente_api(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        produit_id = data.get("produit")
+        quantite = data.get("quantite")
+        montant = data.get("montant")
+        produit = Produit.objects.get(id=produit_id)
+        vente = Vente.objects.create(
+            produit=produit,
+            quantite=quantite,
+            montant=montant
+        )
+        return JsonResponse({"success": True, "vente_id": vente.id})
+    return JsonResponse({"success": False}, status=400)
+
+
