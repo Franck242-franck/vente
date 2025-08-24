@@ -1,86 +1,66 @@
-// Vérifie la compatibilité IndexedDB
-if (!window.indexedDB) {
-    console.log("Votre navigateur ne supporte pas IndexedDB !");
-}
-
-// Ouvre / crée la base de données
-const request = indexedDB.open("VentesDB", 1);
-let db;
-
-request.onupgradeneeded = function(event) {
-    db = event.target.result;
-    const store = db.createObjectStore("ventes", { autoIncrement: true });
-    store.createIndex("date", "date", { unique: false });
-};
-
-request.onsuccess = function(event) {
-    db = event.target.result;
-    console.log("IndexedDB prête !");
-    // Si connecté, envoie les ventes stockées
-    if (navigator.onLine) syncVentes();
-};
-
-request.onerror = function(event) {
-    console.log("Erreur IndexedDB :", event.target.errorCode);
-};
-
-// Fonction pour ajouter une vente hors ligne
+// Fonction pour ajouter une vente en mode hors ligne
 function ajouterVenteOffline(produit, quantite, montant) {
-    const transaction = db.transaction(["ventes"], "readwrite");
-    const store = transaction.objectStore("ventes");
-    const vente = { produit, quantite, montant, date: new Date() };
-    store.add(vente);
-    console.log("Vente stockée offline :", vente);
+    // Récupérer les ventes stockées ou initialiser un tableau vide
+    let ventesOffline = JSON.parse(localStorage.getItem('ventesOffline')) || [];
+
+    // Ajouter la nouvelle vente avec un timestamp
+    ventesOffline.push({
+        produit,
+        quantite,
+        montant,
+        timestamp: new Date().toISOString()
+    });
+
+    // Sauvegarder dans localStorage
+    localStorage.setItem('ventesOffline', JSON.stringify(ventesOffline));
+
+    // Essayer de synchroniser plus tard
+    enregistrerVentesEnAttente();
 }
 
-// Fonction pour synchroniser les ventes dès que la connexion revient
-function syncVentes() {
-    const transaction = db.transaction(["ventes"], "readonly");
-    const store = transaction.objectStore("ventes");
-    const getAll = store.getAll();
+// Fonction pour synchroniser les ventes en attente
+function enregistrerVentesEnAttente() {
+    // Vérifier si on est en ligne
+    if (!navigator.onLine) return;
 
-    getAll.onsuccess = function() {
-        const ventes = getAll.result;
-        ventes.forEach((vente) => {
-            fetch("/api/ventes/ajouter/", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "X-CSRFToken": getCookie("csrftoken")
-                },
-                body: JSON.stringify(vente)
-            })
-            .then(response => response.json())
-            .then(data => {
-                console.log("Vente synchronisée :", data);
-                // Supprimer la vente de IndexedDB après succès
-                const delTransaction = db.transaction(["ventes"], "readwrite");
-                const delStore = delTransaction.objectStore("ventes");
-                delStore.delete(vente.id);
-            })
-            .catch(err => console.log("Erreur sync :", err));
-        });
-    };
-}
+    // Récupérer les ventes stockées
+    const ventesOffline = JSON.parse(localStorage.getItem('ventesOffline')) || [];
 
-// Écoute le retour en ligne
-window.addEventListener("online", () => {
-    console.log("Connexion rétablie ! Synchronisation...");
-    syncVentes();
-});
+    if (ventesOffline.length === 0) return;
 
-// Fonction pour récupérer le CSRF token (nécessaire pour Django)
-function getCookie(name) {
-    let cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-        const cookies = document.cookie.split(';');
-        for (let i = 0; i < cookies.length; i++) {
-            const cookie = cookies[i].trim();
-            if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                break;
+    // Tenter d'envoyer chaque vente
+    const promises = ventesOffline.map(vente => {
+        return fetch("/api/ventes/ajouter/", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": getCookie("csrftoken")
+            },
+            body: JSON.stringify(vente)
+        })
+        .then(response => {
+            if (response.ok) {
+                // Supprimer la vente du localStorage
+                let ventes = JSON.parse(localStorage.getItem('ventesOffline')) || [];
+                ventes = ventes.filter(v => v.timestamp !== vente.timestamp);
+                localStorage.setItem('ventesOffline', JSON.stringify(ventes));
+                return true;
             }
+            return false;
+        })
+        .catch(() => false);
+    });
+
+    Promise.all(promises).then(results => {
+        const successCount = results.filter(r => r).length;
+        if (successCount > 0) {
+            showNotification(`${successCount} vente(s) synchronisée(s) !`);
         }
-    }
-    return cookieValue;
+    });
 }
+
+// Écouter les événements de connexion
+window.addEventListener('online', enregistrerVentesEnAttente);
+
+// Tenter de synchroniser au chargement de la page
+document.addEventListener('DOMContentLoaded', enregistrerVentesEnAttente);
