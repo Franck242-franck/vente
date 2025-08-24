@@ -21,7 +21,7 @@ SECRET_KEY = config('SECRET_KEY')
 # ===========================
 # DEBUG (variable d'environnement)
 # ===========================
-DEBUG = config('DEBUG', default=False, cast=bool)
+DEBUG = config('DEBUG', default=True, cast=bool)
 
 # ===========================
 # ALLOWED HOSTS

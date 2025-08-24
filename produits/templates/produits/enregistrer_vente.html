@@ -21,7 +21,6 @@
       --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
       --radius: 16px;
     }
-
     /* Reset et styles de base */
     * {
       margin: 0;
@@ -29,7 +28,6 @@
       box-sizing: border-box;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
-
     body {
       background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
       min-height: 100vh;
@@ -41,7 +39,6 @@
       align-items: center;
       justify-content: center;
     }
-
     .container {
       width: 100%;
       max-width: 500px;
@@ -51,7 +48,6 @@
       padding: 40px;
       backdrop-filter: blur(10px);
     }
-
     /* Titre */
     h1 {
       color: var(--primary);
@@ -61,7 +57,6 @@
       position: relative;
       padding-bottom: 15px;
     }
-
     h1:after {
       content: '';
       position: absolute;
@@ -73,7 +68,6 @@
       background: linear-gradient(90deg, var(--primary), var(--accent));
       border-radius: 2px;
     }
-
     /* Messages */
     .messages {
       background: rgba(255, 107, 107, 0.1);
@@ -85,28 +79,23 @@
       color: var(--danger);
       animation: fadeIn 0.5s ease;
     }
-
     .messages ul {
       list-style: none;
       padding-left: 0;
     }
-
     .messages li {
       margin-bottom: 8px;
       display: flex;
       align-items: center;
     }
-
     .messages li:before {
       content: "⚠️";
       margin-right: 8px;
     }
-
     /* Formulaire */
     form {
       width: 100%;
     }
-
     label {
       display: block;
       margin-bottom: 10px;
@@ -114,7 +103,6 @@
       color: var(--primary);
       font-size: 1rem;
     }
-
     select,
     input[type="number"] {
       width: 100%;
@@ -129,14 +117,12 @@
       font-weight: 500;
       color: var(--dark);
     }
-
     select:focus,
     input[type="number"]:focus {
       outline: none;
       border-color: var(--primary);
       box-shadow: 0 4px 15px rgba(67, 97, 238, 0.2);
     }
-
     /* Montant total */
     #montant {
       font-size: 1.4rem;
@@ -150,12 +136,10 @@
       box-shadow: 0 4px 15px rgba(67, 97, 238, 0.1);
       transition: all 0.3s ease;
     }
-
     #montant:hover {
       transform: translateY(-3px);
       box-shadow: 0 6px 20px rgba(67, 97, 238, 0.15);
     }
-
     /* Bouton */
     button {
       background: linear-gradient(90deg, var(--success), #00d4aa);
@@ -171,16 +155,13 @@
       box-shadow: 0 4px 15px rgba(6, 255, 165, 0.3);
       margin-top: 10px;
     }
-
     button:hover {
       transform: translateY(-3px);
       box-shadow: 0 6px 20px rgba(6, 255, 165, 0.4);
     }
-
     button:active {
       transform: translateY(1px);
     }
-
     /* Lien retour */
     .back-link {
       display: inline-flex;
@@ -198,43 +179,35 @@
       transition: all 0.3s ease;
       width: 100%;
     }
-
     .back-link:hover {
       transform: translateY(-3px);
       box-shadow: 0 6px 20px rgba(67, 97, 238, 0.4);
       color: white;
     }
-
     /* Responsive */
     @media (max-width: 600px) {
       body {
         padding: 15px;
       }
-
       .container {
         padding: 30px 20px;
       }
-
       h1 {
         font-size: 1.8rem;
       }
-
       select,
       input[type="number"] {
         padding: 12px 16px;
       }
-
       #montant {
         font-size: 1.2rem;
         padding: 12px;
       }
-
       button {
         padding: 14px 16px;
         font-size: 1rem;
       }
     }
-
     /* Animation */
     @keyframes fadeIn {
       from {
@@ -246,12 +219,51 @@
         transform: translateY(0);
       }
     }
+    /* Styles pour les notifications */
+    #notification-container {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 1000;
+    }
+    .notification {
+      padding: 15px 20px;
+      margin-bottom: 10px;
+      border-radius: 8px;
+      color: white;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      animation: slideIn 0.3s ease;
+    }
+    @keyframes slideIn {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+    @keyframes slideOut {
+      from { transform: translateX(0); opacity: 1; }
+      to { transform: translateX(100%); opacity: 0; }
+    }
+    /* Indicateur de connexion */
+    #connection-status {
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      padding: 8px 15px;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: bold;
+      z-index: 1000;
+    }
   </style>
 </head>
 <body>
+  <!-- Indicateur de connexion -->
+  <div id="connection-status"></div>
+
+  <!-- Conteneur pour les notifications -->
+  <div id="notification-container"></div>
+
   <div class="container">
     <h1>💰 Enregistrer une vente</h1>
-
     {% if messages %}
       <div class="messages">
         <ul>
@@ -261,24 +273,77 @@
         </ul>
       </div>
     {% endif %}
-
     <form method="post">
       {% csrf_token %}
       <label for="id_produit">Produit :</label>
       {{ form.produit }}
-
       <label for="id_quantite">Quantité vendue :</label>
       {{ form.quantite }}
-
       <div id="montant">Montant total : 0 FCFA</div>
-
       <button type="submit">✅ Enregistrer la vente</button>
     </form>
-
     <a href="{% url 'lister' %}" class="back-link">← Retour à la liste des produits</a>
   </div>
 
   <script>
+    // Fonction pour récupérer un cookie
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    // Fonction pour afficher des notifications
+    function showNotification(message, type = 'success') {
+        const container = document.getElementById('notification-container');
+        const notification = document.createElement('div');
+        notification.className = 'notification';
+
+        if (type === 'success') {
+            notification.style.background = 'linear-gradient(90deg, #06ffa5, #00d4aa)';
+        } else if (type === 'info') {
+            notification.style.background = 'linear-gradient(90deg, #4361ee, #3a56d4)';
+        } else {
+            notification.style.background = 'linear-gradient(90deg, #ff6b6b, #ff5252)';
+        }
+
+        notification.textContent = message;
+        container.appendChild(notification);
+
+        setTimeout(() => {
+            notification.style.animation = 'slideOut 0.3s ease';
+            setTimeout(() => container.removeChild(notification), 300);
+        }, 3000);
+    }
+
+    // Mettre à jour l'indicateur de connexion
+    function updateConnectionStatus() {
+        const statusElement = document.getElementById('connection-status');
+        if (navigator.onLine) {
+            statusElement.textContent = '✅ En ligne';
+            statusElement.style.background = 'rgba(6, 255, 165, 0.2)';
+            statusElement.style.color = '#00a86b';
+        } else {
+            statusElement.textContent = '📴 Hors ligne';
+            statusElement.style.background = 'rgba(255, 107, 107, 0.2)';
+            statusElement.style.color = '#ff5252';
+        }
+    }
+
+    // Mettre à jour au chargement et lors des changements de connexion
+    window.addEventListener('load', updateConnectionStatus);
+    window.addEventListener('online', updateConnectionStatus);
+    window.addEventListener('offline', updateConnectionStatus);
+
     const prixProduits = {
       {% for produit in produits %}
         "{{ produit.id }}": {{ produit.prix }}{% if not forloop.last %},{% endif %}
@@ -309,51 +374,71 @@
     updateMontant();
   </script>
 
- <!-- Chargement du script pour la gestion des ventes hors ligne -->
-<script src="{% static 'js/offline-sales.js' %}"></script>
+  <!-- Chargement du script pour la gestion des ventes hors ligne -->
+  <script src="{% static 'js/offline-sales.js' %}"></script>
 
-<!-- Script inline pour intercepter la soumission du formulaire -->
-<script>
-document.querySelector("form").addEventListener("submit", function(e) {
-    e.preventDefault();
-    const produit = document.getElementById("id_produit").value;
-    const quantite = parseInt(document.getElementById("id_quantite").value) || 0;
-    const montant = quantite * (parseInt(document.getElementById("id_produit").selectedOptions[0].dataset.prix) || 0);
+  <!-- Script inline pour intercepter la soumission du formulaire -->
+  <script>
+    document.querySelector("form").addEventListener("submit", function(e) {
+        e.preventDefault();
+        const produit = document.getElementById("id_produit").value;
+        const quantite = parseInt(document.getElementById("id_quantite").value) || 0;
+        const montant = quantite * (parseInt(document.getElementById("id_produit").selectedOptions[0].dataset.prix) || 0);
 
-    if (navigator.onLine) {
-        fetch("/api/ventes/ajouter/", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "X-CSRFToken": getCookie("csrftoken")
-            },
-            body: JSON.stringify({ produit, quantite, montant })
-        }).then(() => alert("Vente enregistrée !"))
-          .catch(() => {
-              ajouterVenteOffline(produit, quantite, montant);
-              alert("Vente stockée offline !");
-          });
-    } else {
-        ajouterVenteOffline(produit, quantite, montant);
-        alert("Vente stockée offline !");
+        if (navigator.onLine) {
+            fetch("/api/ventes/ajouter/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": getCookie("csrftoken")
+                },
+                body: JSON.stringify({ produit, quantite, montant })
+            })
+            .then(response => {
+                if (response.ok) {
+                    showNotification("Vente enregistrée avec succès !");
+                    this.reset();
+                    updateMontant();
+                } else {
+                    throw new Error("Erreur lors de l'enregistrement");
+                }
+            })
+            .catch(() => {
+                ajouterVenteOffline(produit, quantite, montant);
+                showNotification("Vente stockée hors ligne !", 'info');
+                this.reset();
+                updateMontant();
+            });
+        } else {
+            ajouterVenteOffline(produit, quantite, montant);
+            showNotification("Vente stockée hors ligne !", 'info');
+            this.reset();
+            updateMontant();
+        }
+    });
+  </script>
+
+  <!-- Service Worker -->
+  <script>
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register("{% static 'js/service-worker.js' %}")
+            .then(function(registration) {
+                console.log("Service worker enregistré avec succès.");
+
+                // Vérifier les mises à jour
+                registration.addEventListener('updatefound', () => {
+                    const installingWorker = registration.installing;
+                    installingWorker.addEventListener('statechange', () => {
+                        if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                            showNotification("Nouvelle version disponible !", 'info');
+                        }
+                    });
+                });
+            })
+            .catch(function(error) {
+                console.log("Erreur lors de l'enregistrement du service worker :", error);
+            });
     }
-
-    this.reset();
-});
-</script>
-
-<!-- Service Worker -->
-<script>
-  if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register("{% static 'js/service-worker.js' %}")
-          .then(function(registration) {
-              console.log("Service worker enregistré avec succès.");
-          })
-          .catch(function(error) {
-              console.log("Erreur lors de l'enregistrement du service worker :", error);
-          });
-  }
-</script>
-
+  </script>
 </body>
 </html>
