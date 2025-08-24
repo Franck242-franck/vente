@@ -14,5 +14,5 @@ urlpatterns = [
 
     path('caisse/', views.dashboard_caisse, name='dashboard_caisse'),
     path("api/ventes/ajouter/", views.ajouter_vente_api, name="ajouter_vente_api"),
-
+    path('offline.html', TemplateView.as_view(template_name='offline.html'), name='offline'),
 ]

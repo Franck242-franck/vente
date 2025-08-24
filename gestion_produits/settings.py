@@ -130,6 +130,11 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
 
+# Ajoutez ces lignes après STATICFILES_DIRS
+WHITENOISE_USE_FINDERS = True
+WHITENOISE_MANIFEST_STRICT = False
+WHITENOISE_INDEX_FILE = True  # Pour servir index.html automatiquement
+
 # ===========================
 # AUTH REDIRECTION
 # ===========================
