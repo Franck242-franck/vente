@@ -4,551 +4,168 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="manifest" href="{% static 'manifest.json' %}">
-  <meta name="theme-color" content="#4361ee">
+  <meta name="theme-color" content="#007bff">
+
   <title>Enregistrer une vente</title>
-
-  <!-- Select2 CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-
-  <!-- Font Awesome pour les icônes -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
   <style>
-    :root {
-      --primary: #4361ee;
-      --primary-dark: #3a56d4;
-      --secondary: #f72585;
-      --success: #4cc9f0;
-      --warning: #f8961e;
-      --danger: #f94144;
-      --light: #f8f9fa;
-      --dark: #212529;
-      --gray: #6c757d;
-      --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-      --transition: all 0.3s ease;
-    }
-
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
-
     body {
-      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-      min-height: 100vh;
-      padding: 20px;
-      color: var(--dark);
+      font-family: Arial, sans-serif;
+      background-color: #f0f4f8;
+      padding: 15px;
+      margin: 0;
     }
-
-    .container {
-      max-width: 600px;
+    h1 {
+      color: #333;
+      text-align: center;
+      font-size: 1.8em;
+      margin-bottom: 20px;
+    }
+    form {
+      max-width: 500px;
       margin: 0 auto;
       background: white;
-      border-radius: 16px;
-      box-shadow: var(--shadow);
-      overflow: hidden;
-      animation: fadeIn 0.5s ease;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    h1 {
-      background: var(--primary);
-      color: white;
       padding: 20px;
-      text-align: center;
-      font-size: 1.8rem;
-      margin-bottom: 0;
-      box-shadow: 0 2px 10px rgba(67, 97, 238, 0.3);
+      border-radius: 8px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
     }
-
-    .messages {
-      background: var(--success);
-      color: white;
-      padding: 15px;
-      text-align: center;
-      font-weight: 500;
-    }
-
-    .messages ul {
-      list-style: none;
-      padding: 0;
-    }
-
-    .messages li {
-      padding: 5px 0;
-    }
-
-    form {
-      padding: 25px;
-    }
-
     label {
       display: block;
       margin-bottom: 8px;
-      font-weight: 600;
-      color: var(--dark);
+      font-weight: bold;
+      color: #555;
     }
-
-    .select2-container {
-      width: 100% !important;
-      margin-bottom: 20px;
-    }
-
-    .select2-selection {
-      height: 50px !important;
-      border: 2px solid #e1e5e9 !important;
-      border-radius: 8px !important;
-      display: flex !important;
-      align-items: center !important;
-      padding: 0 15px !important;
-      transition: var(--transition) !important;
-    }
-
-    .select2-selection:focus {
-      border-color: var(--primary) !important;
-      box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2) !important;
-    }
-
-    .select2-selection__placeholder {
-      color: var(--gray) !important;
-    }
-
-    .select2-dropdown {
-      border: none !important;
-      border-radius: 8px !important;
-      box-shadow: var(--shadow) !important;
-    }
-
+    select,
     input[type="number"] {
       width: 100%;
-      padding: 15px;
-      border: 2px solid #e1e5e9;
-      border-radius: 8px;
-      font-size: 1rem;
-      transition: var(--transition);
-      margin-bottom: 20px;
+      padding: 12px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      box-sizing: border-box;
+      font-size: 1em;
     }
-
-    input[type="number"]:focus {
-      border-color: var(--primary);
-      outline: none;
-      box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
-    }
-
     #montant {
-      background: var(--light);
-      padding: 15px;
-      border-radius: 8px;
-      font-size: 1.2rem;
-      font-weight: 600;
+      font-size: 1.2em;
+      color: #000;
+      font-weight: bold;
       text-align: center;
-      margin-bottom: 25px;
-      color: var(--primary);
-      border: 2px dashed var(--primary);
+      margin-top: 10px;
     }
-
-    button[type="submit"] {
-      width: 100%;
-      padding: 16px;
-      background: var(--primary);
-      color: white;
+    button {
+      background-color: #28a745;
       border: none;
-      border-radius: 8px;
-      font-size: 1.1rem;
-      font-weight: 600;
+      padding: 14px 20px;
+      color: white;
+      font-weight: bold;
+      font-size: 1em;
+      border-radius: 5px;
       cursor: pointer;
-      transition: var(--transition);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
+      width: 100%;
+      transition: background-color 0.3s ease;
     }
-
-    button[type="submit"]:hover {
-      background: var(--primary-dark);
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(67, 97, 238, 0.3);
+    button:hover {
+      background-color: #218838;
     }
-
-    .back-link {
+    a {
       display: block;
+      margin-top: 20px;
       text-align: center;
-      padding: 20px;
-      color: var(--primary);
+      color: #007BFF;
       text-decoration: none;
-      font-weight: 500;
-      transition: var(--transition);
-      border-top: 1px solid #e1e5e9;
+      font-size: 1em;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+    .messages {
+      max-width: 500px;
+      margin: 10px auto;
+      color: red;
+      font-size: 0.95em;
+      padding: 0 10px;
     }
 
-    .back-link:hover {
-      background: rgba(67, 97, 238, 0.05);
-    }
-
-    /* Indicateur de connexion */
-    #connection-status {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      padding: 10px 15px;
-      border-radius: 30px;
-      font-size: 0.9rem;
-      font-weight: 500;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      z-index: 1000;
-      transition: var(--transition);
-    }
-
-    #connection-status.online {
-      background: rgba(76, 201, 240, 0.2);
-      color: var(--success);
-    }
-
-    #connection-status.offline {
-      background: rgba(249, 65, 68, 0.2);
-      color: var(--danger);
-    }
-
-    /* Notifications */
-    #notification-container {
-      position: fixed;
-      top: 80px;
-      right: 20px;
-      z-index: 1000;
-      max-width: 350px;
-    }
-
-    .notification {
-      background: white;
-      padding: 15px 20px;
-      border-radius: 8px;
-      margin-bottom: 10px;
-      box-shadow: var(--shadow);
-      display: flex;
-      align-items: center;
-      gap: 15px;
-      animation: slideIn 0.3s ease;
-      border-left: 4px solid;
-    }
-
-    @keyframes slideIn {
-      from { transform: translateX(100%); opacity: 0; }
-      to { transform: translateX(0); opacity: 1; }
-    }
-
-    .notification.success {
-      border-color: var(--success);
-    }
-
-    .notification.error {
-      border-color: var(--danger);
-    }
-
-    .notification.info {
-      border-color: var(--primary);
-    }
-
-    .notification.warning {
-      border-color: var(--warning);
-    }
-
-    .notification i {
-      font-size: 1.2rem;
-    }
-
-    .notification.success i {
-      color: var(--success);
-    }
-
-    .notification.error i {
-      color: var(--danger);
-    }
-
-    .notification.info i {
-      color: var(--primary);
-    }
-
-    .notification.warning i {
-      color: var(--warning);
-    }
-
-    /* Responsive */
-    @media (max-width: 768px) {
+    /* Responsive mobile */
+    @media (max-width: 600px) {
       body {
         padding: 10px;
       }
-
-      h1 {
-        font-size: 1.5rem;
-        padding: 15px;
-      }
-
-      form {
-        padding: 20px;
-      }
-
-      .select2-selection {
-        height: 45px !important;
-        padding: 0 12px !important;
-      }
-
-      input[type="number"] {
-        padding: 12px;
-      }
-
-      button[type="submit"] {
-        padding: 14px;
-        font-size: 1rem;
-      }
-
-      #connection-status {
-        top: 10px;
-        right: 10px;
-        font-size: 0.8rem;
-        padding: 8px 12px;
-      }
-
-      #notification-container {
-        top: 60px;
-        right: 10px;
-        left: 10px;
-        max-width: none;
-      }
-    }
-
-    @media (max-width: 480px) {
-      .container {
-        border-radius: 12px;
-      }
-
-      h1 {
-        font-size: 1.3rem;
-      }
-
       form {
         padding: 15px;
       }
-
-      .select2-selection {
-        height: 42px !important;
-        padding: 0 10px !important;
+      h1 {
+        font-size: 1.5em;
       }
-
-      input[type="number"] {
-        padding: 10px;
-        margin-bottom: 15px;
-      }
-
-      #montant {
+      button {
         padding: 12px;
-        font-size: 1.1rem;
-        margin-bottom: 20px;
-      }
-
-      button[type="submit"] {
-        padding: 12px;
-        font-size: 0.95rem;
       }
     }
   </style>
 </head>
 <body>
-  <!-- Indicateur de connexion -->
-  <div id="connection-status">
-    <i class="fas fa-wifi"></i>
-    <span>En ligne</span>
-  </div>
 
-  <!-- Conteneur pour les notifications -->
-  <div id="notification-container"></div>
+  <h1>Enregistrer une vente</h1>
 
-  <div class="container">
-    <h1><i class="fas fa-cash-register"></i> Enregistrer une vente</h1>
+  {% if messages %}
+    <ul class="messages">
+      {% for message in messages %}
+        <li>{{ message }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
 
-    {% if messages %}
-      <div class="messages">
-        <ul>
-          {% for message in messages %}
-            <li>{{ message }}</li>
-          {% endfor %}
-        </ul>
-      </div>
-    {% endif %}
+  <form method="post">
+    {% csrf_token %}
 
-   <form method="post" id="vente-form">
-  {% csrf_token %}
-  <label for="id_produit">Produit :</label>
-  <select name="produit" id="id_produit" class="form-control" required>
-    <option value="">---------</option>
-    {% for produit in produits %}
-      <option value="{{ produit.id }}" data-prix="{{ produit.prix }}" {% if form.produit.value|add:0 == produit.id %}selected{% endif %}>{{ produit.nom }}</option>
-    {% endfor %}
-  </select>
-  <label for="id_quantite">Quantité vendue :</label>
-  {{ form.quantite }}
-  <div id="montant">
-    <i class="fas fa-money-bill-wave"></i> Montant total : 0 FCFA
-  </div>
-  <button type="submit">
-    <i class="fas fa-check-circle"></i> Enregistrer la vente
-  </button>
-</form>
-    <a href="{% url 'lister' %}" class="back-link">
-      <i class="fas fa-arrow-left"></i> Retour à la liste des produits
-    </a>
-  </div>
+    <label for="id_produit">Produit :</label>
+    {{ form.produit }}
 
-  <!-- jQuery (nécessaire pour Select2) -->
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <label for="id_quantite">Quantité vendue :</label>
+    {{ form.quantite }}
 
-  <!-- Select2 JS -->
-  <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <div id="montant">Montant total : 0 FCFA</div>
+
+    <button type="submit">Enregistrer</button>
+  </form>
+
+  <a href="{% url 'lister' %}">← Retour à la liste des produits</a>
 
   <script>
-    $(document).ready(function() {
-      // Appliquer Select2 uniquement sur le champ produit
-      $('#id_produit').select2({
-        placeholder: "🔍 Rechercher un produit...",
-        allowClear: true,
-        width: '100%'
-      });
-    });
-  </script>
+    const prixProduits = {
+      {% for produit in produits %}
+        "{{ produit.id }}": {{ produit.prix }}{% if not forloop.last %},{% endif %}
+      {% endfor %}
+    };
 
-  <script>
-  // Script pour le calcul du montant
-  document.addEventListener('DOMContentLoaded', function() {
-    const quantiteInput = document.getElementById('id_quantite');
-    const produitSelect = document.getElementById('id_produit');
-    const montantDiv = document.getElementById('montant');
-    const venteForm = document.getElementById('vente-form');
+    const selectProduit = document.getElementById("id_produit");
+    const inputQuantite = document.getElementById("id_quantite");
+    const montantDiv = document.getElementById("montant");
 
-    // Fonction pour mettre à jour le montant
     function updateMontant() {
-      const quantite = parseInt(quantiteInput.value) || 0;
-
-      // Récupérer l'option sélectionnée
-      const selectedOption = produitSelect.options[produitSelect.selectedIndex];
-
-      // Récupérer le prix depuis l'attribut data-prix
-      const prixUnitaire = parseFloat(selectedOption.getAttribute('data-prix')) || 0;
-
-      const total = quantite * prixUnitaire;
-      montantDiv.innerHTML = `<i class="fas fa-money-bill-wave"></i> Montant total : ${total.toLocaleString()} FCFA`;
+      const produitId = selectProduit.value;
+      const quantite = parseInt(inputQuantite.value) || 0;
+      const prix = prixProduits[produitId] || 0;
+      const total = quantite * prix;
+      montantDiv.textContent = `Montant total : ${total} FCFA`;
     }
 
-    // Écouter les changements sur le produit et la quantité
-    produitSelect.addEventListener('change', updateMontant);
-    quantiteInput.addEventListener('input', updateMontant);
+    selectProduit.addEventListener("change", updateMontant);
+    inputQuantite.addEventListener("input", updateMontant);
 
-    // Initialiser au chargement
+    // Initialisation
     updateMontant();
-
-    // Gérer la soumission du formulaire en mode hors ligne
-    venteForm.addEventListener('submit', function(e) {
-      // Vérifier si on est en ligne
-      if (!navigator.onLine) {
-        e.preventDefault();
-
-        const produitId = produitSelect.value;
-        const quantite = quantiteInput.value;
-        const selectedOption = produitSelect.options[produitSelect.selectedIndex];
-        const prixUnitaire = parseFloat(selectedOption.getAttribute('data-prix')) || 0;
-        const montant = quantite * prixUnitaire;
-
-        // Enregistrer la vente hors ligne
-        ajouterVenteOffline(produitId, quantite, montant);
-
-        // Réinitialiser le formulaire
-        venteForm.reset();
-        updateMontant();
-
-        // Afficher un message de confirmation
-        showNotification("Vente enregistrée localement. Elle sera synchronisée lorsque vous serez en ligne.", "success");
-      }
-    });
-  });
-
-  // Script pour l'indicateur de connexion
-  const connectionStatus = document.getElementById('connection-status');
-  function updateConnectionStatus() {
-    if (navigator.onLine) {
-      connectionStatus.className = 'online';
-      connectionStatus.innerHTML = '<i class="fas fa-wifi"></i> <span>En ligne</span>';
-    } else {
-      connectionStatus.className = 'offline';
-      connectionStatus.innerHTML = '<i class="fas fa-wifi-slash"></i> <span>Hors ligne</span>';
-    }
-  }
-  window.addEventListener('online', updateConnectionStatus);
-  window.addEventListener('offline', updateConnectionStatus);
-  // Initialiser
-  updateConnectionStatus();
-
-  // Fonction pour afficher les notifications
-  function showNotification(message, type = 'info') {
-    const container = document.getElementById('notification-container');
-    const notification = document.createElement('div');
-    notification.className = `notification ${type}`;
-    let icon = 'fa-info-circle';
-    if (type === 'success') icon = 'fa-check-circle';
-    if (type === 'error') icon = 'fa-exclamation-circle';
-    if (type === 'warning') icon = 'fa-exclamation-triangle';
-    notification.innerHTML = `
-      <i class="fas ${icon}"></i>
-      <div>${message}</div>
-    `;
-    container.appendChild(notification);
-    // Auto-suppression après 5 secondes
-    setTimeout(() => {
-      notification.style.animation = 'slideOut 0.3s ease';
-      setTimeout(() => {
-        container.removeChild(notification);
-      }, 300);
-    }, 5000);
-  }
-
-  // Animation pour la suppression
-  const style = document.createElement('style');
-  style.innerHTML = `
-    @keyframes slideOut {
-      from { transform: translateX(0); opacity: 1; }
-      to { transform: translateX(100%); opacity: 0; }
-    }
-  `;
-  document.head.appendChild(style);
-</script>
-
-  <!-- Chargement du script pour la gestion des ventes hors ligne -->
-  <script src="{% static 'js/offline-sales.js' %}"></script>
-
-  <!-- Service Worker -->
+  </script>
   <script>
     if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register("{% static 'js/service-worker.js' %}")
-            .then(function(registration) {
-                console.log("Service worker enregistré avec succès.");
-                registration.addEventListener('updatefound', () => {
-                    const installingWorker = registration.installing;
-                    installingWorker.addEventListener('statechange', () => {
-                        if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                            showNotification("Nouvelle version disponible !", 'info');
-                        }
-                    });
-                });
-            })
-            .catch(function(error) {
-                console.log("Erreur lors de l'enregistrement du service worker :", error);
-            });
+      navigator.serviceWorker.register("{% static 'js/service-worker.js' %}")
+        .then(function(registration) {
+          console.log("Service worker enregistré avec succès.");
+        })
+        .catch(function(error) {
+          console.log("Erreur lors de l'enregistrement du service worker :", error);
+        });
     }
   </script>
+
 </body>
 </html>

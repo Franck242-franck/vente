@@ -94,27 +94,28 @@ from django.core.exceptions import ValidationError
 @login_required
 def enregistrer_vente(request):
     if request.method == "POST":
-        form = VenteForm(request.POST, user=request.user)
+        form = VenteForm(request.POST)
         if form.is_valid():
             vente = form.save(commit=False)
-            vente.utilisateur = request.user
-            try:
-                vente.save()  # Le stock sera mis à jour automatiquement
+            produit = vente.produit
+
+            if vente.quantite > produit.quantite:
+                messages.error(request, f"Stock insuffisant. Il reste seulement {produit.quantite} unités de {produit.nom}.")
+            else:
+                produit.quantite -= vente.quantite
+                produit.save()
+                vente.utilisateur = request.user
+                vente.save()
                 messages.success(request, "Vente enregistrée avec succès.")
                 return redirect('lister')
-            except ValidationError as e:
-                messages.error(request, str(e))
     else:
-        form = VenteForm(user=request.user)
+        form = VenteForm()
 
-    # Récupérer les produits de l'utilisateur
-    produits = Produit.objects.filter(utilisateur=request.user)
-
+    produits = Produit.objects.all()  # Pour ton JS de calcul automatique
     return render(request, "produits/enregistrer_vente.html", {
         "form": form,
         "produits": produits
     })
-
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.forms import UserCreationForm
 from django.shortcuts import render, redirect, get_object_or_404
