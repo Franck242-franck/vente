@@ -89,7 +89,7 @@ from django.shortcuts import render, redirect
 from .forms import VenteForm
 from .models import Produit, Vente
 from django.core.exceptions import ValidationError
-
+from .models import Produit, Vente, HistoriqueVente  # Ajoutez HistoriqueVente ici
 
 @login_required
 def enregistrer_vente(request):
