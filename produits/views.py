@@ -90,6 +90,7 @@ from .forms import VenteForm
 from .models import Produit, Vente
 from django.core.exceptions import ValidationError
 
+
 @login_required
 def enregistrer_vente(request):
     if request.method == "POST":
@@ -106,12 +107,13 @@ def enregistrer_vente(request):
     else:
         form = VenteForm(user=request.user)
 
+    # Récupérer les produits de l'utilisateur
     produits = Produit.objects.filter(utilisateur=request.user)
+
     return render(request, "produits/enregistrer_vente.html", {
         "form": form,
         "produits": produits
     })
-
 
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.forms import UserCreationForm

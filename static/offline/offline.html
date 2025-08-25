@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+{% load static %}
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
@@ -6,39 +6,156 @@
     <title>Hors ligne</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
             margin: 0;
-            background: #f0f0f0;
-            text-align: center;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: #333;
         }
         .offline-container {
+            text-align: center;
+            padding: 2rem;
             background: white;
-            padding: 40px;
-            border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            max-width: 400px;
+            width: 90%;
+            animation: fadeIn 0.5s ease;
         }
-        h1 { color: #ff6b6b; }
-        p { color: #333; }
-        a {
-            display: inline-block;
-            margin-top: 20px;
-            padding: 12px 24px;
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .offline-icon {
+            margin-bottom: 1.5rem;
+        }
+        .offline-icon svg {
+            width: 4rem;
+            height: 4rem;
+            fill: #4361ee;
+        }
+        h1 {
+            color: #4361ee;
+            margin-bottom: 1rem;
+            font-size: 1.8rem;
+        }
+        p {
+            color: #666;
+            margin-bottom: 2rem;
+            line-height: 1.5;
+        }
+        .retry-button {
             background: #4361ee;
             color: white;
-            text-decoration: none;
-            border-radius: 50px;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .retry-button:hover {
+            background: #3a56d4;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(67, 97, 238, 0.3);
+        }
+        .retry-button:active {
+            transform: translateY(0);
+        }
+        .retry-button svg {
+            width: 16px;
+            height: 16px;
+            fill: white;
+        }
+        /* Responsive */
+        @media (max-width: 480px) {
+            .offline-container {
+                padding: 1.5rem;
+            }
+
+            .offline-icon svg {
+                width: 3.5rem;
+                height: 3.5rem;
+            }
+
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            p {
+                font-size: 0.95rem;
+                margin-bottom: 1.5rem;
+            }
+
+            .retry-button {
+                padding: 10px 20px;
+                font-size: 0.95rem;
+            }
         }
     </style>
 </head>
 <body>
     <div class="offline-container">
-        <h1>📴 Vous êtes hors ligne</h1>
-        <p>Cette page s'affiche quand vous n'avez pas de connexion Internet.</p>
-        <a href="/">Réessayer</a>
+        <div class="offline-icon">
+            <!-- Icône Wi-Fi hors ligne -->
+            <svg viewBox="0 0 640 512">
+                <path d="M634.91 154.88C457.74-8.99 182.19-8.93 5.09 154.88c-6.66 6.16-6.79 16.59-.35 22.98l34.24 33.97c6.14 6.08 16.02 6.23 22.4.38 145.92-133.68 371.3-133.71 517.25 0 6.38 5.85 16.26 5.7 22.4-.38l34.24-33.97c6.43-6.39 6.3-16.82-.36-22.98zM320 352c-35.35 0-64 28.65-64 64s28.65 64 64 64 64-28.65 64-64-28.65-64-64-64zm202.67-83.68c-5.47-4.62-13.57-5.34-19.86-1.23a407.79 407.79 0 0 1-79.6 40.32c-6.64 2.61-11 8.81-11 15.85v40.54c0 7.03 4.37 13.24 11 15.85 18.75 7.39 37.88 16.94 56.09 28.39 6.26 3.91 14.34 3.28 19.84-1.27l40.32-33.12c5.31-4.37 6.38-11.99 2.56-17.69-37.46-54.94-88.96-97.7-149.2-123.88-6.17-2.76-13.31-1.44-18.12 3.26l-36.42 35.86c-5.12 5.04-6.33 12.87-3.05 19.22 13.48 26.58 20.76 56.35 20.76 87.64 0 31.29-7.28 61.06-20.76 87.64-3.28 6.35-2.07 14.18 3.05 19.22l36.42 35.86c4.81 4.7 11.95 6.02 18.12 3.26 60.24-26.18 111.74-68.94 149.2-123.88 3.82-5.7 2.75-13.32-2.56-17.69l-40.32-33.12z"/>
+            </svg>
+        </div>
+        <h1>Vous êtes hors ligne</h1>
+        <p>Vérifiez votre connexion Internet et réessayez.</p>
+        <button id="retry-button" class="retry-button">
+            <!-- Icône de rafraîchissement -->
+            <svg viewBox="0 0 512 512">
+                <path d="M500.33 0h-47.41a12 12 0 0 0-12 12.57l4 82.76A247.42 247.42 0 0 0 256 8C119.34 8 7.9 119.53 8 256.19 8.1 393.07 119.1 504 256 504a247.1 247.1 0 0 0 166.18-63.91 12 12 0 0 0 .48-17.43l-34-34a12 12 0 0 0-16.38-.55A176 176 0 1 1 402.1 157.8l-101.53-4.87a12 12 0 0 0-12.57 12v47.41a12 12 0 0 0 12 12h200.33a12 12 0 0 0 12-12V12a12 12 0 0 0-12-12z"/>
+            </svg>
+            Réessayer
+        </button>
     </div>
+
+    <script>
+        document.getElementById('retry-button').addEventListener('click', function() {
+            // Ajouter une animation de rotation à l'icône
+            const icon = this.querySelector('svg');
+            icon.style.animation = 'spin 1s linear infinite';
+
+            // Désactiver le bouton pendant la vérification
+            this.disabled = true;
+            this.innerHTML = '<svg viewBox="0 0 512 512" style="animation: spin 1s linear infinite;"><path d="M500.33 0h-47.41a12 12 0 0 0-12 12.57l4 82.76A247.42 247.42 0 0 0 256 8C119.34 8 7.9 119.53 8 256.19 8.1 393.07 119.1 504 256 504a247.1 247.1 0 0 0 166.18-63.91 12 12 0 0 0 .48-17.43l-34-34a12 12 0 0 0-16.38-.55A176 176 0 1 1 402.1 157.8l-101.53-4.87a12 12 0 0 0-12.57 12v47.41a12 12 0 0 0 12 12h200.33a12 12 0 0 0 12-12V12a12 12 0 0 0-12-12z"/></svg> Vérification...';
+
+            // Vérifier la connexion après un court délai
+            setTimeout(() => {
+                if (navigator.onLine) {
+                    window.location.reload();
+                } else {
+                    // Réactiver le bouton si toujours hors ligne
+                    this.disabled = false;
+                    this.innerHTML = '<svg viewBox="0 0 512 512"><path d="M500.33 0h-47.41a12 12 0 0 0-12 12.57l4 82.76A247.42 247.42 0 0 0 256 8C119.34 8 7.9 119.53 8 256.19 8.1 393.07 119.1 504 256 504a247.1 247.1 0 0 0 166.18-63.91 12 12 0 0 0 .48-17.43l-34-34a12 12 0 0 0-16.38-.55A176 176 0 1 1 402.1 157.8l-101.53-4.87a12 12 0 0 0-12.57 12v47.41a12 12 0 0 0 12 12h200.33a12 12 0 0 0 12-12V12a12 12 0 0 0-12-12z"/></svg> Réessayer';
+                    icon.style.animation = '';
+                }
+            }, 1500);
+        });
+
+        // Vérifier automatiquement la connexion toutes les 5 secondes
+        setInterval(() => {
+            if (navigator.onLine) {
+                window.location.reload();
+            }
+        }, 5000);
+    </script>
+
+    <style>
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+    </style>
 </body>
 </html>

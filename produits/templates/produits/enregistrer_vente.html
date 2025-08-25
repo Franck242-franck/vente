@@ -383,24 +383,24 @@
       </div>
     {% endif %}
 
-    <form method="post">
-      {% csrf_token %}
-
-      <label for="id_produit">Produit :</label>
-      {{ form.produit }}
-
-      <label for="id_quantite">Quantité vendue :</label>
-      {{ form.quantite }}
-
-      <div id="montant">
-        <i class="fas fa-money-bill-wave"></i> Montant total : 0 FCFA
-      </div>
-
-      <button type="submit">
-        <i class="fas fa-check-circle"></i> Enregistrer la vente
-      </button>
-    </form>
-
+   <form method="post" id="vente-form">
+  {% csrf_token %}
+  <label for="id_produit">Produit :</label>
+  <select name="produit" id="id_produit" class="form-control" required>
+    <option value="">---------</option>
+    {% for produit in produits %}
+      <option value="{{ produit.id }}" data-prix="{{ produit.prix }}" {% if form.produit.value|add:0 == produit.id %}selected{% endif %}>{{ produit.nom }}</option>
+    {% endfor %}
+  </select>
+  <label for="id_quantite">Quantité vendue :</label>
+  {{ form.quantite }}
+  <div id="montant">
+    <i class="fas fa-money-bill-wave"></i> Montant total : 0 FCFA
+  </div>
+  <button type="submit">
+    <i class="fas fa-check-circle"></i> Enregistrer la vente
+  </button>
+</form>
     <a href="{% url 'lister' %}" class="back-link">
       <i class="fas fa-arrow-left"></i> Retour à la liste des produits
     </a>
@@ -424,82 +424,108 @@
   </script>
 
   <script>
-    // Script pour le calcul du montant
-    document.addEventListener('DOMContentLoaded', function() {
-      const quantiteInput = document.getElementById('id_quantite');
-      const montantDiv = document.getElementById('montant');
+  // Script pour le calcul du montant
+  document.addEventListener('DOMContentLoaded', function() {
+    const quantiteInput = document.getElementById('id_quantite');
+    const produitSelect = document.getElementById('id_produit');
+    const montantDiv = document.getElementById('montant');
+    const venteForm = document.getElementById('vente-form');
 
-      // Fonction pour mettre à jour le montant
-      function updateMontant() {
-        const quantite = parseInt(quantiteInput.value) || 0;
-        const prixUnitaire = 1000; // Remplacez par la logique pour récupérer le prix réel
-        const total = quantite * prixUnitaire;
-        montantDiv.innerHTML = `<i class="fas fa-money-bill-wave"></i> Montant total : ${total.toLocaleString()} FCFA`;
+    // Fonction pour mettre à jour le montant
+    function updateMontant() {
+      const quantite = parseInt(quantiteInput.value) || 0;
+
+      // Récupérer l'option sélectionnée
+      const selectedOption = produitSelect.options[produitSelect.selectedIndex];
+
+      // Récupérer le prix depuis l'attribut data-prix
+      const prixUnitaire = parseFloat(selectedOption.getAttribute('data-prix')) || 0;
+
+      const total = quantite * prixUnitaire;
+      montantDiv.innerHTML = `<i class="fas fa-money-bill-wave"></i> Montant total : ${total.toLocaleString()} FCFA`;
+    }
+
+    // Écouter les changements sur le produit et la quantité
+    produitSelect.addEventListener('change', updateMontant);
+    quantiteInput.addEventListener('input', updateMontant);
+
+    // Initialiser au chargement
+    updateMontant();
+
+    // Gérer la soumission du formulaire en mode hors ligne
+    venteForm.addEventListener('submit', function(e) {
+      // Vérifier si on est en ligne
+      if (!navigator.onLine) {
+        e.preventDefault();
+
+        const produitId = produitSelect.value;
+        const quantite = quantiteInput.value;
+        const selectedOption = produitSelect.options[produitSelect.selectedIndex];
+        const prixUnitaire = parseFloat(selectedOption.getAttribute('data-prix')) || 0;
+        const montant = quantite * prixUnitaire;
+
+        // Enregistrer la vente hors ligne
+        ajouterVenteOffline(produitId, quantite, montant);
+
+        // Réinitialiser le formulaire
+        venteForm.reset();
+        updateMontant();
+
+        // Afficher un message de confirmation
+        showNotification("Vente enregistrée localement. Elle sera synchronisée lorsque vous serez en ligne.", "success");
       }
-
-      quantiteInput.addEventListener('input', updateMontant);
-
-      // Initialiser au chargement
-      updateMontant();
     });
+  });
 
-    // Script pour l'indicateur de connexion
-    const connectionStatus = document.getElementById('connection-status');
-
-    function updateConnectionStatus() {
-      if (navigator.onLine) {
-        connectionStatus.className = 'online';
-        connectionStatus.innerHTML = '<i class="fas fa-wifi"></i> <span>En ligne</span>';
-      } else {
-        connectionStatus.className = 'offline';
-        connectionStatus.innerHTML = '<i class="fas fa-wifi-slash"></i> <span>Hors ligne</span>';
-      }
+  // Script pour l'indicateur de connexion
+  const connectionStatus = document.getElementById('connection-status');
+  function updateConnectionStatus() {
+    if (navigator.onLine) {
+      connectionStatus.className = 'online';
+      connectionStatus.innerHTML = '<i class="fas fa-wifi"></i> <span>En ligne</span>';
+    } else {
+      connectionStatus.className = 'offline';
+      connectionStatus.innerHTML = '<i class="fas fa-wifi-slash"></i> <span>Hors ligne</span>';
     }
+  }
+  window.addEventListener('online', updateConnectionStatus);
+  window.addEventListener('offline', updateConnectionStatus);
+  // Initialiser
+  updateConnectionStatus();
 
-    window.addEventListener('online', updateConnectionStatus);
-    window.addEventListener('offline', updateConnectionStatus);
-
-    // Initialiser
-    updateConnectionStatus();
-
-    // Fonction pour afficher les notifications
-    function showNotification(message, type = 'info') {
-      const container = document.getElementById('notification-container');
-
-      const notification = document.createElement('div');
-      notification.className = `notification ${type}`;
-
-      let icon = 'fa-info-circle';
-      if (type === 'success') icon = 'fa-check-circle';
-      if (type === 'error') icon = 'fa-exclamation-circle';
-      if (type === 'warning') icon = 'fa-exclamation-triangle';
-
-      notification.innerHTML = `
-        <i class="fas ${icon}"></i>
-        <div>${message}</div>
-      `;
-
-      container.appendChild(notification);
-
-      // Auto-suppression après 5 secondes
-      setTimeout(() => {
-        notification.style.animation = 'slideOut 0.3s ease';
-        setTimeout(() => {
-          container.removeChild(notification);
-        }, 300);
-      }, 5000);
-    }
-
-    // Animation pour la suppression
-    const style = document.createElement('style');
-    style.innerHTML = `
-      @keyframes slideOut {
-        from { transform: translateX(0); opacity: 1; }
-        to { transform: translateX(100%); opacity: 0; }
-      }
+  // Fonction pour afficher les notifications
+  function showNotification(message, type = 'info') {
+    const container = document.getElementById('notification-container');
+    const notification = document.createElement('div');
+    notification.className = `notification ${type}`;
+    let icon = 'fa-info-circle';
+    if (type === 'success') icon = 'fa-check-circle';
+    if (type === 'error') icon = 'fa-exclamation-circle';
+    if (type === 'warning') icon = 'fa-exclamation-triangle';
+    notification.innerHTML = `
+      <i class="fas ${icon}"></i>
+      <div>${message}</div>
     `;
-    document.head.appendChild(style);
-  </script>
+    container.appendChild(notification);
+    // Auto-suppression après 5 secondes
+    setTimeout(() => {
+      notification.style.animation = 'slideOut 0.3s ease';
+      setTimeout(() => {
+        container.removeChild(notification);
+      }, 300);
+    }, 5000);
+  }
+
+  // Animation pour la suppression
+  const style = document.createElement('style');
+  style.innerHTML = `
+    @keyframes slideOut {
+      from { transform: translateX(0); opacity: 1; }
+      to { transform: translateX(100%); opacity: 0; }
+    }
+  `;
+  document.head.appendChild(style);
+</script>
 
   <!-- Chargement du script pour la gestion des ventes hors ligne -->
   <script src="{% static 'js/offline-sales.js' %}"></script>
