@@ -3,29 +3,30 @@ from django.db import models
 # Create your models here.
 from django.contrib.auth.models import User
 
+
 class Produit(models.Model):
     nom = models.CharField(max_length=50)
     quantite = models.IntegerField()
     prix = models.IntegerField()
-    vendu = models.BooleanField(default=True)
+    # Correction : un produit disponible n'est pas vendu
+    vendu = models.BooleanField(default=False)
     utilisateur = models.ForeignKey(User, on_delete=models.CASCADE, related_name='produits')
 
     def __str__(self):
         return self.nom
 
-from django.db import transaction
-from django.core.exceptions import ValidationError
 
 class Vente(models.Model):
     produit = models.ForeignKey(Produit, on_delete=models.CASCADE)
-    utilisateur = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
+    # Suppression de default=1, l'utilisateur sera défini dans la vue
+    utilisateur = models.ForeignKey(User, on_delete=models.CASCADE)
     quantite = models.PositiveIntegerField(default=1)
     montant_total = models.IntegerField(editable=False)
     date_heure = models.DateTimeField(auto_now_add=True)
     caisse = models.ForeignKey('Caisse', null=True, blank=True, on_delete=models.SET_NULL)
 
     def save(self, *args, **kwargs):
-        # Calcul du montant total uniquement (sans modifier le stock)
+        # Calcul du montant total
         self.montant_total = self.produit.prix * self.quantite
         super().save(*args, **kwargs)
 

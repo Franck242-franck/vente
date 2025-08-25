@@ -94,28 +94,57 @@ from django.core.exceptions import ValidationError
 @login_required
 def enregistrer_vente(request):
     if request.method == "POST":
-        form = VenteForm(request.POST)
+        form = VenteForm(request.POST, user=request.user)
         if form.is_valid():
             vente = form.save(commit=False)
             produit = vente.produit
 
+            # Vérifier si le produit est déjà vendu
+            if produit.vendu:
+                messages.error(request, f"Ce produit ({produit.nom}) est déjà vendu et n'est plus disponible.")
+                return render(request, "produits/enregistrer_vente.html", {
+                    "form": form,
+                    "produits": Produit.objects.filter(utilisateur=request.user, vendu=False)
+                })
+
+            # Vérifier le stock
             if vente.quantite > produit.quantite:
-                messages.error(request, f"Stock insuffisant. Il reste seulement {produit.quantite} unités de {produit.nom}.")
+                messages.error(request,
+                               f"Stock insuffisant. Il reste seulement {produit.quantite} unités de {produit.nom}.")
             else:
+                # Mise à jour du stock
                 produit.quantite -= vente.quantite
+                # Marquer comme vendu si le stock atteint 0
+                if produit.quantite == 0:
+                    produit.vendu = True
                 produit.save()
+
+                # Enregistrement de la vente
                 vente.utilisateur = request.user
                 vente.save()
+
+                # Optionnel: créer un historique de vente
+                HistoriqueVente.objects.create(
+                    produit=produit,
+                    quantite=vente.quantite,
+                    date_vente=vente.date_heure,
+                    utilisateur=request.user
+                )
+
                 messages.success(request, "Vente enregistrée avec succès.")
                 return redirect('lister')
     else:
-        form = VenteForm()
+        form = VenteForm(user=request.user)
 
-    produits = Produit.objects.all()  # Pour ton JS de calcul automatique
+    # Ne récupérer que les produits non vendus de l'utilisateur
+    produits = Produit.objects.filter(utilisateur=request.user, vendu=False)
+
     return render(request, "produits/enregistrer_vente.html", {
         "form": form,
         "produits": produits
     })
+
+
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.forms import UserCreationForm
 from django.shortcuts import render, redirect, get_object_or_404
