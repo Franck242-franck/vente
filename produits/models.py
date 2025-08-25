@@ -25,14 +25,24 @@ class Vente(models.Model):
     date_heure = models.DateTimeField(auto_now_add=True)
     caisse = models.ForeignKey('Caisse', null=True, blank=True, on_delete=models.SET_NULL)
 
+    def clean(self):
+        """
+        Vérifie que la quantité demandée est disponible en stock.
+        """
+        if self.quantite > self.produit.quantite:
+            raise ValidationError(
+                f"Stock insuffisant : il reste seulement {self.produit.quantite} en stock."
+            )
+
     def save(self, *args, **kwargs):
+        # Toujours vérifier avant de sauvegarder
+        self.clean()
+
         # Calcul du montant total
         self.montant_total = self.produit.prix * self.quantite
 
-        # Mise à jour du stock uniquement si nouvelle vente
+        # Mise à jour du stock uniquement si c’est une nouvelle vente
         if not self.pk:
-            if self.quantite > self.produit.quantite:
-                raise ValidationError(f"Stock insuffisant : {self.produit.quantite} restant")
             self.produit.quantite -= self.quantite
             self.produit.save()
 
