@@ -13,11 +13,12 @@ class Produit(models.Model):
     def __str__(self):
         return self.nom
 
-from django.db import transaction
+from django.db import models
+from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 
 class Vente(models.Model):
-    produit = models.ForeignKey(Produit, on_delete=models.CASCADE)
+    produit = models.ForeignKey('Produit', on_delete=models.CASCADE)
     utilisateur = models.ForeignKey(User, on_delete=models.CASCADE)
     quantite = models.PositiveIntegerField(default=1)
     montant_total = models.IntegerField(editable=False)
@@ -25,8 +26,16 @@ class Vente(models.Model):
     caisse = models.ForeignKey('Caisse', null=True, blank=True, on_delete=models.SET_NULL)
 
     def save(self, *args, **kwargs):
-        # Calcul du montant total uniquement (sans modifier le stock)
+        # Calcul du montant total
         self.montant_total = self.produit.prix * self.quantite
+
+        # Mise à jour du stock uniquement si nouvelle vente
+        if not self.pk:
+            if self.quantite > self.produit.quantite:
+                raise ValidationError(f"Stock insuffisant : {self.produit.quantite} restant")
+            self.produit.quantite -= self.quantite
+            self.produit.save()
+
         super().save(*args, **kwargs)
 
     def __str__(self):

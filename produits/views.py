@@ -83,27 +83,30 @@ def gerer_utilisateurs(request):
     utilisateurs = User.objects.all()
     return render(request, 'produits/gerer_utilisateurs.html', {'utilisateurs': utilisateurs})
 
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect
+from .forms import VenteForm
+from .models import Produit, Vente
+from django.core.exceptions import ValidationError
+
 @login_required
 def enregistrer_vente(request):
     if request.method == "POST":
-        form = VenteForm(request.POST, user=request.user)  # ← ici
+        form = VenteForm(request.POST, user=request.user)
         if form.is_valid():
             vente = form.save(commit=False)
-            produit = vente.produit
-
-            if vente.quantite > produit.quantite:
-                messages.error(request, f"Stock insuffisant. Il reste seulement {produit.quantite} unités de {produit.nom}.")
-            else:
-                produit.quantite -= vente.quantite
-                produit.save()
-                vente.utilisateur = request.user
-                vente.save()
+            vente.utilisateur = request.user
+            try:
+                vente.save()  # Le stock sera mis à jour automatiquement
                 messages.success(request, "Vente enregistrée avec succès.")
                 return redirect('lister')
+            except ValidationError as e:
+                messages.error(request, str(e))
     else:
-        form = VenteForm(user=request.user)  # ← ici aussi
+        form = VenteForm(user=request.user)
 
-    produits = Produit.objects.filter(utilisateur=request.user)  # ← pour JS
+    produits = Produit.objects.filter(utilisateur=request.user)
     return render(request, "produits/enregistrer_vente.html", {
         "form": form,
         "produits": produits
@@ -203,59 +206,43 @@ def dashboard_caisse(request):
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
-from django.core.exceptions import ObjectDoesNotExist
-from .models import Vente, Produit
+from django.core.exceptions import ObjectDoesNotExist, ValidationError
+from .models import Produit, Vente
 
 @csrf_exempt
 def ajouter_vente_api(request):
-    if request.method == "POST":
+    if request.method != "POST":
+        return JsonResponse({"success": False, "error": "Méthode non autorisée"}, status=405)
+
+    try:
+        data = json.loads(request.body)
+        produit_id = data.get("produit")
+        quantite = int(data.get("quantite", 0))
+
+        if not produit_id or quantite <= 0:
+            return JsonResponse({"success": False, "error": "Données invalides"}, status=400)
+
         try:
-            data = json.loads(request.body)
-            produit_id = data.get("produit")
-            quantite = int(data.get("quantite", 0))
-            montant = data.get("montant")
+            produit = Produit.objects.get(id=produit_id)
+        except ObjectDoesNotExist:
+            return JsonResponse({"success": False, "error": "Produit introuvable"}, status=404)
 
-            if not produit_id or quantite <= 0:
-                return JsonResponse({"success": False, "error": "Données invalides"}, status=400)
+        # Crée la vente en utilisant la logique du modèle
+        vente = Vente(
+            produit=produit,
+            quantite=quantite,
+            utilisateur=request.user if request.user.is_authenticated else None
+        )
+        vente.save()
 
-            # Vérifie que le produit existe
-            try:
-                produit = Produit.objects.get(id=produit_id)
-            except ObjectDoesNotExist:
-                return JsonResponse({"success": False, "error": "Produit introuvable"}, status=404)
+        return JsonResponse({
+            "success": True,
+            "vente_id": vente.id,
+            "message": "Vente enregistrée avec succès"
+        })
 
-            # Vérifie le stock
-            if quantite > produit.quantite:
-                return JsonResponse({
-                    "success": False,
-                    "error": f"Stock insuffisant. Disponible: {produit.quantite}"
-                }, status=400)
-
-            # Calcul du montant si pas fourni
-            if not montant:
-                montant = produit.prix * quantite
-
-            # Crée la vente
-            vente = Vente.objects.create(
-                produit=produit,
-                quantite=quantite,
-                montant=montant,
-                utilisateur=request.user if request.user.is_authenticated else None
-            )
-
-            # Mets à jour le stock
-            produit.quantite -= quantite
-            produit.save()
-
-            return JsonResponse({
-                "success": True,
-                "vente_id": vente.id,
-                "message": "Vente enregistrée avec succès"
-            })
-
-        except Exception as e:
-            return JsonResponse({"success": False, "error": str(e)}, status=500)
-
-    return JsonResponse({"success": False, "error": "Méthode non autorisée"}, status=405)
-
+    except ValidationError as e:
+        return JsonResponse({"success": False, "error": str(e)}, status=400)
+    except Exception as e:
+        return JsonResponse({"success": False, "error": str(e)}, status=500)
 
